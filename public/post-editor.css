@@ -1,0 +1,30 @@
+body {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 20px;
+}
+
+h2 {
+    margin: 0;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+input {
+    height: 30px;
+}
+
+textarea {
+    height: 60vh;
+}
+
+.btn-container {
+    margin-left: auto;
+    display: flex;
+    gap: 20px;
+}

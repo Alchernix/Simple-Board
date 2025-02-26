@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= post.title %></title>
+    <link rel="stylesheet" href="/post-detail.css">
+</head>
+<body>
+    <main>
+        <h3 class="title"><%= post.title %></h3>
+        <div class="detail-container">
+            <div class="username"><%= post.username %></div>
+            <div class="date"><%= post.created_at %></div>
+        </div>
+        <div class="content"><%= post.content %></div>
+    </main>
+    <div class="btn-container">
+        <a href="/" class="back-to-main-btn">목록</a>
+        <% if (user.id === post.author) { %>
+            <a href="#" class="edit-btn">수정</a>
+            <form action="/post/<%= post.id %>/delete" method="post">
+                <button class="delete-btn">삭제</button>
+            </form>
+        <% } %>
+    </div>
+    
+</body>
+</html>
