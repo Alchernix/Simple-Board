@@ -1,0 +1,65 @@
+header a {
+    color: black;
+    text-decoration: none;
+}
+
+header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+h1 {
+    margin: 0;
+}
+
+.search-container {
+    display: flex;
+    flex-grow: 1;
+    gap: 5px;
+}
+
+.search-container input {
+    flex-grow: 1;
+}
+
+.search-container button {
+    cursor: pointer;
+}
+
+.create-post-btn {
+    display: inline-block;
+    padding: 5px 10px;
+    border: 2px solid black;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    font-size: 14px;
+}
+
+/* dialog */
+#user-btn {
+    position: relative;
+    cursor: pointer;
+}
+
+#dialog {
+    padding: 10px;
+    border: 1px solid black;
+    border-radius: 10px;
+    display: none;
+    position: absolute;
+    top: 60px;
+    right: 10px;
+    margin: 0;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    background-color: white;
+}
+
+#dialog a {
+    padding: 5px 10px;
+    border: 1px solid black;
+    border-radius: 5px;
+}

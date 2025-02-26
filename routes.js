@@ -21,6 +21,9 @@ router.post("/post-editor", postControllers.createPostPost);
 
 router.get("/post/:postId", postControllers.getPostDetail);
 
+router.get("/post/:postId/edit", postControllers.editPostGet);
+router.post("/post/:postId/edit", postControllers.editPostPost);
+
 router.post("/post/:postId/delete", postControllers.deletePost);
 
 module.exports = router;

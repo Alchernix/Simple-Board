@@ -9,10 +9,11 @@
     
 </head>
 <body>
-    <h2>게시글 작성</h2>
+    <h2><%= title %></h2>
     <form action="" method="post">
-        <input type="text" placeholder="제목을 입력해 주세요" name="title" required>
-        <textarea name="content" required></textarea>
+        <input type="text" placeholder="제목을 입력해 주세요" name="title" required
+        value="<%= locals.post ? post.title : '' %>">
+        <textarea name="content" required><%= locals.post ? post.content : '' %></textarea>
         <div class="btn-container">
            <a href="/">취소</a>
             <button type="submit">확인</button> 

@@ -1,5 +1,6 @@
 body {
-    padding: 20px;
+    margin: 0;
+    padding: 20px 5vw;
 }
 
 main {
@@ -23,6 +24,7 @@ main {
 
 .content {
     padding: 7px 0;
+    font-size: 11pt;
 }
 
 .btn-container {

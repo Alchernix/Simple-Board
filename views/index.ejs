@@ -6,25 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Simple Board</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="header.css">
 </head>
 <body>
-    <header>
-        <h1>게시판 사이트</h1>
-
-        <div class="search-container">
-            <input type="text">
-            <button>검색</button>
-        </div>
-        
-        
-        <% if(locals.user) { %>
-            <div><%= user.username %></div>
-            <a href="/log-out">로그아웃</a>
-        <% } else { %>
-            <a href="/sign-up">회원가입</a>
-            <a href="/sign-in">로그인</a>
-        <% } %>   
-    </header>
+    <%- include('header', {user: user}) %>
     <main>
         <% if(locals.user) { %>
             <a href="/post-editor" class="create-post-btn">글쓰기</a>
@@ -55,5 +40,29 @@
             </tbody>
         </table>
     </main>
+    <div id="dialog">
+        <a href="/">회원정보</a>
+        <a href="/log-out">로그아웃</a>
+    </div>
+    <script>
+        const userbtn = document.querySelector("#user-btn");
+        const dialog = document.querySelector("#dialog");
+
+        function closeDialog(e) {
+            console.log(e.target)
+            if (!dialog.contains(e.target)) {
+                dialog.style.display = "none";
+                document.removeEventListener("click", closeDialog);
+            }
+        }
+
+        userbtn.addEventListener("click", (e) => {
+            dialog.style.display = "flex";
+            setTimeout(() => {
+                document.addEventListener("click", closeDialog);
+            }, 0);
+            
+        });
+    </script>
 </body>
 </html>
