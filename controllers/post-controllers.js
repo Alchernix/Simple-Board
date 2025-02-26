@@ -19,13 +19,13 @@ async function createPostPost(req, res) {
 async function getPostDetail(req, res) {
     if (req.user) {
         const postId = Number(req.params.postId);
+        const userId = req.user.id;
         const post = await db.getPost(postId);
         const comments = await db.getCommentByPostId(postId);
         post.created_at = format(new Date(post.created_at), "yyyy.MM.dd HH:mm:ss");
-        comments.forEach(comment => {
-            comment.created_at = format(new Date(comment.created_at), "yyyy.MM.dd HH:mm:ss");
-        });
-        res.render("post-detail", { post, user: req.user, comments });
+        const isLiked = await db.isLiked(userId, postId);
+        const likeCount = await db.countLikesByPostId(postId);
+        res.render("post-detail", { post, user: req.user, comments, format, isLiked, likeCount: likeCount.count });
     } else {
         res.render("sign-up", { isNonMemb: true });
     }

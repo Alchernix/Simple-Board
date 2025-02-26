@@ -39,7 +39,7 @@
                             <td><%= post.username %></td>
                             <td><%= format(new Date(post.created_at), "yyyy.MM.dd") %></td>
                             <!-- todo -->
-                            <td>0</td>
+                            <td><%= post.like_count %></td>
                         </tr>
                     <% }) %>
                 <% } %>

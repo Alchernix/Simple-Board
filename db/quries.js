@@ -20,11 +20,14 @@ async function createPost(userId, title, content) {
 //최근 게시물이 위로 오도록 역순으로 조회
 async function getAllPosts() {
     const SQL = `
-    SELECT posts.id, posts.title, users.username, posts.created_at, count(comments.id) AS comment_count FROM posts
+    SELECT posts.id, posts.title, users.username, posts.created_at, count(DISTINCT comments.id) AS comment_count, count(DISTINCT likes.id) AS like_count
+    FROM posts
     INNER JOIN users
     ON posts.author = users.id
     LEFT JOIN comments
     ON posts.id = comments.post_id
+    LEFT JOIN likes
+    ON posts.id = likes.post_id
     GROUP BY posts.id, posts.title, users.username, posts.created_at
     ORDER BY posts.id DESC;`
     const { rows } = await pool.query(SQL);
@@ -111,6 +114,35 @@ async function deleteComment(id) {
     await pool.query("DELETE from comments WHERE id = $1", [id]);
 }
 
+// ================================================
+// 하트
+async function isLiked(userId, postId) {
+    const { rows } = await pool.query("SELECT * FROM likes WHERE user_id = $1 AND post_id = $2", [userId, postId]);
+    if (rows.length !== 0) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+async function addLike(userId, postId) {
+    const SQL = `
+    INSERT INTO likes (user_id, post_id)
+    VALUES ($1, $2)
+    ON CONFLICT (user_id, post_id) DO NOTHING;
+    `
+    await pool.query(SQL, [userId, postId]);
+}
+
+async function removeLike(userId, postId) {
+    await pool.query("DELETE FROM likes WHERE user_id = $1 AND post_id = $2", [userId, postId]);
+}
+
+async function countLikesByPostId(postId) {
+    const { rows } = await pool.query("SELECT count(*) FROM likes WHERE post_id = $1", [postId]);
+    return rows[0];
+}
+
 module.exports = {
     createUser,
     createPost,
@@ -123,4 +155,8 @@ module.exports = {
     getCommentByPostId,
     countCommentsByPostId,
     deleteComment,
+    isLiked,
+    addLike,
+    removeLike,
+    countLikesByPostId
 }

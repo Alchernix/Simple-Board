@@ -4,6 +4,7 @@ const controllers = require("./controllers/controllers");
 const userControllers = require("./controllers/user-controllers");
 const postControllers = require("./controllers/post-controllers");
 const commentControllers = require("./controllers/comment-controllers");
+const likeControllers = require("./controllers/like-controller");
 
 router.get("/", controllers.indexPageGet);
 
@@ -30,5 +31,8 @@ router.post("/post/:postId/delete", postControllers.deletePost);
 // comments
 router.post("/post/:postId/comment/create", commentControllers.createComment);
 router.post("/post/:postId/comment/:commentId/delete", commentControllers.deleteComment);
+
+//likes
+router.post("/post/:postId/like", likeControllers.like);
 
 module.exports = router;

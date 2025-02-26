@@ -1,6 +1,5 @@
 // 댓글
 const db = require("../db/quries");
-const { format } = require("date-fns");
 
 async function createComment(req, res) {
     const postId = Number(req.params.postId);
