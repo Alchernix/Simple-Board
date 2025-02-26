@@ -20,8 +20,12 @@ async function getPostDetail(req, res) {
     if (req.user) {
         const postId = Number(req.params.postId);
         const post = await db.getPost(postId);
+        const comments = await db.getCommentByPostId(postId);
         post.created_at = format(new Date(post.created_at), "yyyy.MM.dd HH:mm:ss");
-        res.render("post-detail", { post, user: req.user });
+        comments.forEach(comment => {
+            comment.created_at = format(new Date(comment.created_at), "yyyy.MM.dd HH:mm:ss");
+        });
+        res.render("post-detail", { post, user: req.user, comments });
     } else {
         res.render("sign-up", { isNonMemb: true });
     }

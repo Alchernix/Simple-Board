@@ -21,6 +21,8 @@
                     <th>번호</th>
                     <th>제목</th>
                     <th>작성자</th>
+                    <th>작성일</th>
+                    <th>하트</th>
                 </tr>
             </thead>
             <tbody>
@@ -32,37 +34,18 @@
                                 <a href="/post/<%= post.id %>" class="post-title">
                                     <%= post.title %>
                                 </a>
+                                <div class="comment-count">[<%= post.comment_count %>]</div>
                             </td>
                             <td><%= post.username %></td>
+                            <td><%= format(new Date(post.created_at), "yyyy.MM.dd") %></td>
+                            <!-- todo -->
+                            <td>0</td>
                         </tr>
                     <% }) %>
                 <% } %>
             </tbody>
         </table>
     </main>
-    <div id="dialog">
-        <a href="/">회원정보</a>
-        <a href="/log-out">로그아웃</a>
-    </div>
-    <script>
-        const userbtn = document.querySelector("#user-btn");
-        const dialog = document.querySelector("#dialog");
-
-        function closeDialog(e) {
-            console.log(e.target)
-            if (!dialog.contains(e.target)) {
-                dialog.style.display = "none";
-                document.removeEventListener("click", closeDialog);
-            }
-        }
-
-        userbtn.addEventListener("click", (e) => {
-            dialog.style.display = "flex";
-            setTimeout(() => {
-                document.addEventListener("click", closeDialog);
-            }, 0);
-            
-        });
-    </script>
+    <script src="/header.js"></script>
 </body>
 </html>

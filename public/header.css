@@ -1,4 +1,4 @@
-header a {
+a {
     color: black;
     text-decoration: none;
 }
@@ -44,6 +44,7 @@ h1 {
 }
 
 #dialog {
+    z-index: 1;
     padding: 10px;
     border: 1px solid black;
     border-radius: 10px;

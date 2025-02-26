@@ -6,6 +6,7 @@
     <title><%= post.title %></title>
     <link rel="stylesheet" href="/post-detail.css">
     <link rel="stylesheet" href="/header.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 <body>
     <%- include('header', {user: user}) %>
@@ -16,17 +17,43 @@
             <div class="date"><%= post.created_at %></div>
         </div>
         <pre class="content"><%= post.content %></pre>
+        <div class="like-btn-container">
+            <button class="like-btn" id="like-btn">
+                <i class="fa-solid fa-heart"></i>
+            </button>
+            <!-- todo -->
+            <div>0</div>
+        </div>
+        
     </main>
+    <% comments.forEach(comment => { %>
+        <div class="comment">
+            <div class="username-closeBtn">
+                <div><%= comment.username %></div>
+                <% if (user.id === comment.user_id || user.is_admin) { %>
+                    <form action="/post/<%= post.id %>/comment/<%= comment.id %>/delete" method="post">
+                        <button type="submit" onclick="return confirm('댓글을 삭제하시겠습니까?');">X</button>
+                    </form>  
+                <% } %>
+            </div>
+            <pre><%= comment.content %></pre>
+            <div><%= comment.created_at %></div>
+        </div>
+    <% }) %>
+    <form action="/post/<%= post.id %>/comment/create" method="post" class="comment-container">
+        <textarea name="content" id="comment-input" placeholder="댓글을 입력하세요."></textarea>
+        <button type="submit">등록</button>
+    </form>
     <div class="btn-container">
         <a href="/" class="back-to-main-btn">목록</a>
         <!-- 포스트 작성자나 어드민 유저만 포스트 수정&삭제 가능 -->
         <% if (user.id === post.author || user.is_admin) { %>
             <a href="/post/<%= post.id %>/edit" class="edit-btn">수정</a>
             <form action="/post/<%= post.id %>/delete" method="post">
-                <button class="delete-btn">삭제</button>
+                <button class="delete-btn" onclick="return confirm('게시글을 삭제하시겠습니까?')">삭제</button>
             </form>
         <% } %>
     </div>
-    
+    <script src="/header.js"></script>
 </body>
 </html>

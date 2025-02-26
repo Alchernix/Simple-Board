@@ -15,15 +15,18 @@ async function createPost(userId, title, content) {
     `
     await pool.query(SQL, [userId, title, content]);
 }
-
+// ================================================
 // 포스트
 //최근 게시물이 위로 오도록 역순으로 조회
 async function getAllPosts() {
     const SQL = `
-    SELECT posts.id, posts.title, users.username FROM posts
+    SELECT posts.id, posts.title, users.username, posts.created_at, count(comments.id) AS comment_count FROM posts
     INNER JOIN users
     ON posts.author = users.id
-    ORDER BY posts.id DESC`
+    LEFT JOIN comments
+    ON posts.id = comments.post_id
+    GROUP BY posts.id, posts.title, users.username, posts.created_at
+    ORDER BY posts.id DESC;`
     const { rows } = await pool.query(SQL);
     return rows;
 }
@@ -77,7 +80,36 @@ async function editPost(id, title, content) {
 async function deletePost(id) {
     await pool.query(`DELETE FROM posts WHERE id = $1`, [id]);
 }
+// ================================================
+// 댓글
+async function createComment(userId, postId, content) {
+    await pool.query("INSERT INTO comments (user_id, post_id, content) VALUES ($1, $2, $3);", [userId, postId, content]);
+}
 
+async function getCommentByPostId(id) {
+    const SQL = `
+    SELECT comments.id, comments.user_id, comments.content, comments.created_at, users.username
+    FROM comments
+    INNER JOIN users
+    ON users.id = comments.user_id
+    WHERE comments.post_id = $1;
+    `
+    const { rows } = await pool.query(SQL, [id]);
+    return rows;
+}
+
+async function countCommentsByPostId(id) {
+    const SQL = `
+    SELECT count(*) FROM comments
+    WHERE post_id = $1;
+    `
+    const { rows } = await pool.query(SQL, [id]);
+    return rows[0];
+}
+
+async function deleteComment(id) {
+    await pool.query("DELETE from comments WHERE id = $1", [id]);
+}
 
 module.exports = {
     createUser,
@@ -87,4 +119,8 @@ module.exports = {
     getPost,
     editPost,
     deletePost,
+    createComment,
+    getCommentByPostId,
+    countCommentsByPostId,
+    deleteComment,
 }
