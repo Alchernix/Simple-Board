@@ -21,11 +21,20 @@ CREATE TABLE IF NOT EXISTS posts (
     created_at TIMESTAMP DEFAULT NOW()
 );
 
+CREATE TABLE IF NOT EXISTS images (
+    id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    post_id INTEGER NOT NULL REFERENCES posts(id) ON DELETE CASCADE,
+    url TEXT NOT NULL,
+    uploaded_at TIMESTAMP DEFAULT NOW()
+);
+
 CREATE TABLE IF NOT EXISTS comments (
     id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     user_id INTEGER REFERENCES users(id),
     post_id INTEGER REFERENCES posts(id) ON DELETE CASCADE,
     content TEXT NOT NULL,
+    parent_comment_id INTEGER REFERENCES comments(id) ON DELETE SET NULL,
+    is_deleted BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMP DEFAULT NOW()
 );
 
@@ -34,6 +43,17 @@ CREATE TABLE IF NOT EXISTS likes(
     user_id INTEGER REFERENCES users(id),
     post_id INTEGER REFERENCES posts(id) ON DELETE CASCADE,
     UNIQUE(user_id, post_id)
+);
+
+CREATE TABLE IF NOT EXISTS notifications(
+    id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    user_id INTEGER NOT NULL REFERENCES users(id), --알림 받는 사람
+    type VARCHAR(50) NOT NULL, --알림 타입
+    post_id INTEGER REFERENCES posts(id) ON DELETE CASCADE, --삭제된 포스트의 알림은 삭제됨
+    comment_id INTEGER REFERENCES comments(id) ON DELETE CASCADE, --
+    from_user_id INTEGER REFERENCES users(id),
+    created_at TIMESTAMP DEFAULT NOW(),
+    is_read BOOLEAN DEFAULT false
 );
 
 CREATE TABLE IF NOT EXISTS session (

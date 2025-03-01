@@ -1,16 +1,16 @@
 const userbtn = document.querySelector("#user-btn");
-const dialog = document.querySelector("#dialog");
+const userDialog = document.querySelector("#user-dialog");
+// const notificationDialog = document.querySelector("notification-dialog");
 
 function closeDialog(e) {
-    console.log(e.target)
-    if (!dialog.contains(e.target)) {
-        dialog.style.display = "none";
+    if (!userDialog.contains(e.target) && !userbtn.contains(e.target)) {
+        userDialog.style.display = "none";
         document.removeEventListener("click", closeDialog);
     }
 }
 
 userbtn.addEventListener("click", (e) => {
-    dialog.style.display = "flex";
+    userDialog.style.display = "flex";
     setTimeout(() => {
         document.addEventListener("click", closeDialog);
     }, 0);

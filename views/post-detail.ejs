@@ -16,37 +16,44 @@
             <div class="username"><%= post.username %></div>
             <div class="date"><%= post.created_at %></div>
         </div>
-        <pre class="content"><%= post.content %></pre>
-        <form action="/post/<%= post.id %>/like" method="post" class="like-btn-container">
-            <button type="submit" class="like-btn" id="like-btn" data-postid="<%= post.id %>">
+        <div class="content">
+            <pre><%= post.content %></pre>
+            <% if (images !== []) { %>
+                <% images.forEach(image => { %>
+                    <img src="<%= image.url %>" alt="Image">
+                <% }) %>
+            <% } %>
+        </div>
+        
+        <form class="like-btn-container">
+            <button class="like-btn" id="like-btn" data-postid="<%= post.id %>">
                 <% if (isLiked) { %>
                     <i class="fa-solid fa-heart"></i>
                 <%} else { %>
                     <i class="fa-regular fa-heart"></i>
                 <% } %>
             </button>
-            <!-- todo -->
             <div id="like-count"><%= likeCount %></div>
         </form>
         
     </main>
-    <% comments.forEach(comment => { %>
-        <div class="comment">
-            <div class="username-closeBtn">
-                <div><%= comment.username %></div>
-                <% if (user.id === comment.user_id || user.is_admin) { %>
-                    <form action="/post/<%= post.id %>/comment/<%= comment.id %>/delete" method="post">
-                        <button type="submit" onclick="return confirm('댓글을 삭제하시겠습니까?');">X</button>
-                    </form>  
-                <% } %>
+    <div class="comments-container" id="comments-container">
+        <% comments.forEach(comment => { %>
+            <div class="comment">
+                <div class="username-closeBtn">
+                    <div><%= comment.username %></div>
+                    <% if (user.id === comment.user_id || user.is_admin) { %>
+                        <button type="submit" class="delete-comment-btn" data-id="<%= comment.id %>">X</button>
+                    <% } %>
+                </div>
+                <pre><%= comment.content %></pre>
+                <div><%= format(new Date(comment.created_at), "yyyy.MM.dd HH:mm:ss") %></div>
             </div>
-            <pre><%= comment.content %></pre>
-            <div><%= format(new Date(comment.created_at), "yyyy.MM.dd HH:mm:ss") %></div>
-        </div>
-    <% }) %>
-    <form action="/post/<%= post.id %>/comment/create" method="post" class="comment-container">
+        <% }) %>
+    </div>
+    <form class="comment-container">
         <textarea name="content" id="comment-input" placeholder="댓글을 입력하세요."></textarea>
-        <button type="submit">등록</button>
+        <button type="submit" id="register-btn">등록</button>
     </form>
     <div class="btn-container">
         <a href="/" class="back-to-main-btn">목록</a>
@@ -60,10 +67,24 @@
     </div>
     <script src="/header.js"></script>
     <script>
+        function format(date) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, "0");
+            const day = String(date.getDate()).padStart(2, "0");
+            const hours = String(date.getHours()).padStart(2, "0");
+            const minutes = String(date.getMinutes()).padStart(2, "0");
+            const seconds = String(date.getSeconds()).padStart(2, "0");
+
+            return `${year}.${month}.${day} ${hours}:${minutes}:${seconds}`;
+        }
         const likeBtn = document.querySelector("#like-btn");
         const likeCountEl = document.querySelector("#like-count");
         const postId = Number(likeBtn.dataset.postid);
+        const commentsContainer = document.querySelector("#comments-container");
+        const registerBtn = document.querySelector("#register-btn");
+        const commentInput = document.querySelector("#comment-input");
 
+        // 하트 버튼 누를 시
         likeBtn.addEventListener("click", async (e) => {
             e.preventDefault();
             const response = await fetch(`/post/${postId}/like`, {method: "POST"});
@@ -74,6 +95,52 @@
                 likeBtn.innerHTML = '<i class="fa-regular fa-heart"></i>';
             }
             likeCountEl.textContent = likeCount;
+        })
+
+        // 댓글 새로 랜더링하는 함수
+        function renderComments(comments, user) {
+            commentsContainer.innerHTML = comments.map(comment => {
+                return `<div class="comment">
+                    <div class="username-closeBtn">
+                        <div>${comment.username}</div>
+                        ${(user.id === comment.user_id || user.is_admin)
+                        ? `<button class="delete-comment-btn" data-id=${comment.id}>X</button>`
+                        : '' }
+                    </div>
+                    <pre>${comment.content}</pre>
+                    <div>${format(new Date(comment.created_at))}</div>
+                </div>`
+            }).join('');
+        }
+
+        // 댓글 작성 시
+        registerBtn.addEventListener("click", async(e) => {
+            e.preventDefault();
+            const content = commentInput.value;
+            const response = await fetch(`/post/${postId}/comment/create`, {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({content})
+            });
+            commentInput.value = '';
+            const {comments, user} = await response.json();
+            renderComments(comments, user);
+        })
+
+        // 댓글 삭제 시
+        document.addEventListener("click", async (e) => {
+            if (e.target.matches(".delete-comment-btn")) {
+                e.preventDefault();
+                if (confirm("댓글을 삭제하시겠습니까?")) {
+                    const commentId = Number(e.target.dataset.id);
+                    const response = await fetch(`/post/${postId}/comment/${commentId}/delete`, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" }
+                    });
+                    const {comments, user} = await response.json();
+                    renderComments(comments, user);
+                }
+            }
         })
     </script>
 </body>

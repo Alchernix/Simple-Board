@@ -1,38 +1,51 @@
 const { Router } = require("express");
+const asyncHandler = require('express-async-handler');
 const router = Router();
+const multer = require('multer');
+const upload = multer({ dest: './uploads/' });
+// const { upload } = require("./app");
 const controllers = require("./controllers/controllers");
 const userControllers = require("./controllers/user-controllers");
 const postControllers = require("./controllers/post-controllers");
 const commentControllers = require("./controllers/comment-controllers");
 const likeControllers = require("./controllers/like-controller");
+const notificationControllers = require("./controllers/notification-controller");
 
-router.get("/", controllers.indexPageGet);
+
+router.get("/", asyncHandler(controllers.indexPageGet));
 
 // users
-router.get("/sign-up", userControllers.signupPageGet);
-router.post("/sign-up", userControllers.signupPagePost);
+router.get("/sign-up", asyncHandler(userControllers.signupPageGet));
+router.post("/sign-up", asyncHandler(userControllers.signupPagePost));
 
-router.get("/sign-in", userControllers.signinPageGet);
-router.post("/sign-in", userControllers.signinPagePost);
+router.get("/sign-in", asyncHandler(userControllers.signinPageGet));
+router.post("/sign-in", asyncHandler(userControllers.signinPagePost));
 
-router.get("/log-out", userControllers.logoutGet);
+router.get("/log-out", asyncHandler(userControllers.logoutGet));
 
 // posts
-router.get("/post-editor", postControllers.createPostGet);
-router.post("/post-editor", postControllers.createPostPost);
+router.get("/post-editor", asyncHandler(postControllers.createPostGet));
+router.post("/post-editor", upload.array("image", 10), asyncHandler(postControllers.createPostPost));
 
-router.get("/post/:postId", postControllers.getPostDetail);
+router.get("/post/:postId", asyncHandler(postControllers.getPostDetail));
 
-router.get("/post/:postId/edit", postControllers.editPostGet);
-router.post("/post/:postId/edit", postControllers.editPostPost);
+router.get("/post/:postId/edit", asyncHandler(postControllers.editPostGet));
+router.post("/post/:postId/edit", upload.array("image", 10), asyncHandler(postControllers.editPostPost));
 
-router.post("/post/:postId/delete", postControllers.deletePost);
+router.post("/post/:postId/delete", asyncHandler(postControllers.deletePost));
+
+router.post("/image/:imgId/delete", asyncHandler(postControllers.deleteImg));
 
 // comments
-router.post("/post/:postId/comment/create", commentControllers.createComment);
-router.post("/post/:postId/comment/:commentId/delete", commentControllers.deleteComment);
+router.post("/post/:postId/comment/create", asyncHandler(commentControllers.createComment));
+router.post("/post/:postId/comment/:commentId/delete", asyncHandler(commentControllers.deleteComment));
 
 //likes
-router.post("/post/:postId/like", likeControllers.like);
+router.post("/post/:postId/like", asyncHandler(likeControllers.like));
+
+// notifications 
+router.get("/user/:userId/notification", asyncHandler(notificationControllers.notificationPageGet));
+router.post("/user/:userId/notification", asyncHandler(notificationControllers.readAllNotifications));
+router.get("/user/:userId/notification/:notificationId", asyncHandler(notificationControllers.readNotification));
 
 module.exports = router;

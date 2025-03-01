@@ -10,16 +10,43 @@
 </head>
 <body>
     <h2><%= title %></h2>
-    <form action="" method="post">
+    <form action="" method="post" enctype="multipart/form-data">
         <input type="text" placeholder="제목을 입력해 주세요" name="title" required
         value="<%= locals.post ? post.title : '' %>">
         <textarea name="content" required><%= locals.post ? post.content : '' %></textarea>
+        <div class="images-container" id="images-container">
+            <% if (locals.images) { %>
+                <% images.forEach(image => { %>
+                    <div class="image-container">
+                        <img src="<%= image.url %>" alt="Image">
+                        <button type="button" class="delete-img-btn" data-id="<%= image.id %>">X</button>
+                    </div>
+                <% }) %>
+            <% } %>
+        </div>
+        <label for="image">이미지 추가: </label>
+        <input type="file" name="image" id="image" accept="image/png, image/jpeg" multiple>
         <div class="btn-container">
-           <a href="/">취소</a>
+           <a href="<%= locals.post ? '/post/' + post.id : '/' %>">취소</a>
             <button type="submit">확인</button> 
         </div>
-        
+
+        <input type="hidden" name="deletedImages" id="deletedImages" value="">
+
     </form>
     <!-- <script src="https://cdn.ckeditor.com/ckeditor5/44.2.1/ckeditor5.umd.js" ></script> -->
+    <script>
+        const hiddenInput = document.querySelector("#deletedImages");
+        const deletedImages = [];
+        // 이미지 삭제 처리
+        document.body.addEventListener("click", (e) => {
+            if (e.target.classList.contains("delete-img-btn")) {
+                const imgId = Number(e.target.dataset.id);
+                deletedImages.push(imgId);
+                hiddenInput.value = deletedImages.join(',');
+                e.target.closest(".image-container").style.display = "none";
+            }
+        })
+    </script>
 </body>
 </html>

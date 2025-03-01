@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notification</title>
+    <link rel="stylesheet" href="/header.css">
+    <link rel="stylesheet" href="/notification.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+<body>
+    <%- include('header', {user: user}) %>
+    <div class="title-container">
+        <h2>알림 목록</h2>
+        <form action="/user/<%= user.id %>/notification" method="post">
+            <button>모두 읽기</button>
+        </form>
+    </div>
+    
+    <ul class="notification-container">
+        <% notifications.forEach(notification => { %>
+            <li class="<%= notification.is_read ? 'read' : 'unread' %>">
+                <a href="/user/<%= user.id %>/notification/<%= notification.id %>" class="notification">
+                    <% if (notification.type === "comment") { %>
+                        <div><%= notification.from_user %> 님이 내 게시글에 댓글을 남겼습니다:</div>
+                        <div><%= notification.content %></div>
+                        <div><%= format(new Date(notification.created_at), "yyyy.MM.dd") %></div>
+                    <% } %>    
+                </a>
+            </li>
+        <% }) %>
+    </ul>
+    <script src="/header.js"></script>
+</body>
+</html>

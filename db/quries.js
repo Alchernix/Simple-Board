@@ -11,9 +11,10 @@ async function createUser(username, password) {
 async function createPost(userId, title, content) {
     const SQL = `
     INSERT INTO posts (author, title, content)
-    VALUES($1, $2, $3);
+    VALUES($1, $2, $3) RETURNING *;
     `
-    await pool.query(SQL, [userId, title, content]);
+    const { rows } = await pool.query(SQL, [userId, title, content]);
+    return rows[0];
 }
 // ================================================
 // 포스트
@@ -51,10 +52,16 @@ async function searchPosts(searchType, searchKeyword) {
             search = "WHERE users.username ILIKE '%' || $1 || '%'";
     }
     const SQL = `
-    SELECT posts.id, posts.title, users.username FROM posts
+    SELECT posts.id, posts.title, users.username, posts.created_at, count(DISTINCT comments.id) AS comment_count, count(DISTINCT likes.id) AS like_count
+    FROM posts
     INNER JOIN users
     ON posts.author = users.id
+    LEFT JOIN comments
+    ON posts.id = comments.post_id
+    LEFT JOIN likes
+    ON posts.id = likes.post_id
     ${search}
+    GROUP BY posts.id, posts.title, users.username, posts.created_at
     ORDER BY posts.id DESC
     `
     const { rows } = await pool.query(SQL, [searchKeyword]);
@@ -84,18 +91,35 @@ async function deletePost(id) {
     await pool.query(`DELETE FROM posts WHERE id = $1`, [id]);
 }
 // ================================================
-// 댓글
-async function createComment(userId, postId, content) {
-    await pool.query("INSERT INTO comments (user_id, post_id, content) VALUES ($1, $2, $3);", [userId, postId, content]);
+// 이미지
+async function uploadImage(postId, url) {
+    await pool.query(`INSERT INTO images (post_id, url) VALUES ($1, $2);`, [postId, url]);
 }
 
-async function getCommentByPostId(id) {
+async function getImagesByPostId(postId) {
+    const { rows } = await pool.query("SELECT * FROM images WHERE post_id = $1", [postId]);
+    return rows;
+}
+
+async function deleteImg(id) {
+    await pool.query("DELETE FROM images WHERE id = $1", [id]);
+}
+
+// ================================================
+// 댓글
+async function createComment(userId, postId, content) {
+    const { rows } = await pool.query("INSERT INTO comments (user_id, post_id, content) VALUES ($1, $2, $3) RETURNING *;", [userId, postId, content]);
+    return rows[0];
+}
+
+async function getCommentsByPostId(id) {
     const SQL = `
     SELECT comments.id, comments.user_id, comments.content, comments.created_at, users.username
     FROM comments
     INNER JOIN users
     ON users.id = comments.user_id
-    WHERE comments.post_id = $1;
+    WHERE comments.post_id = $1
+    ORDER BY comments.id;
     `
     const { rows } = await pool.query(SQL, [id]);
     return rows;
@@ -143,6 +167,46 @@ async function countLikesByPostId(postId) {
     return rows[0];
 }
 
+// ================================================
+// 알림
+
+async function createNotification(userId, type, postId, fromUserId, commentId) {
+    await pool.query("INSERT INTO notifications (user_id, type, post_id, from_user_id, comment_id) VALUES ($1, $2, $3, $4, $5)", [userId, type, postId, fromUserId, commentId]);
+}
+
+async function countUnreadNotifications(userId) {
+    const { rows } = await pool.query("SELECT count(*) FROM NOTIFICATIONS WHERE user_id = $1 AND is_read = false", [userId]);
+    return rows[0].count;
+}
+
+async function getNotifications(userId) {
+    const SQL = `
+    SELECT notifications.type, notifications.is_read, notifications.id, notifications.created_at, comments.content, users.username AS from_user
+    FROM notifications
+    LEFT JOIN comments
+    ON notifications.comment_id = comments.id
+    LEFT JOIN users
+    ON notifications.from_user_id = users.id
+    WHERE notifications.user_id = $1
+    ORDER BY notifications.id DESC;
+    `
+    const { rows } = await pool.query(SQL, [userId]);
+    return rows;
+}
+
+async function getNotificationById(id) {
+    const { rows } = await pool.query("SELECT * FROM notifications WHERE id = $1", [id]);
+    return rows[0];
+}
+
+async function readNotification(id) {
+    await pool.query("UPDATE notifications SET is_read = true WHERE id = $1", [id]);
+}
+
+async function readAllNotifications(userId) {
+    await pool.query("UPDATE notifications SET is_read = true WHERE user_id = $1", [userId]);
+}
+
 module.exports = {
     createUser,
     createPost,
@@ -151,12 +215,21 @@ module.exports = {
     getPost,
     editPost,
     deletePost,
+    uploadImage,
+    getImagesByPostId,
+    deleteImg,
     createComment,
-    getCommentByPostId,
+    getCommentsByPostId,
     countCommentsByPostId,
     deleteComment,
     isLiked,
     addLike,
     removeLike,
-    countLikesByPostId
+    countLikesByPostId,
+    createNotification,
+    countUnreadNotifications,
+    getNotifications,
+    getNotificationById,
+    readNotification,
+    readAllNotifications,
 }

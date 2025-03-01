@@ -3,16 +3,12 @@ body {
     padding: 20px 5vw;
 }
 
-pre {
-    margin: 0;
-    font-size: 11pt;
-}
-
 main {
+    display: flex;
+    flex-direction: column;
     width: 100%;
     border-top: 2px solid black;
     border-bottom: 2px solid black;
-    min-height: 75vh;
     position: relative;
 }
 
@@ -28,8 +24,20 @@ main {
     padding-bottom: 7px;
 }
 
+pre {
+    font-family: inherit;
+    font-size: inherit;
+    margin: 0 0 7px 0;
+}
+
 .content {
+    width: 100%;
     padding: 7px 0;
+    min-height: 40vh;
+}
+
+img {
+    width: 100%;
 }
 
 /* 버튼들 */
@@ -70,10 +78,12 @@ main {
 }
 
 .like-btn-container {
-    position: absolute;
+    /* position: absolute;
     bottom: 20px;
     left: 50%;
-    transform: translate(-50%);
+    transform: translate(-50%); */
+    align-self: center;
+    margin: 20px 0;
     padding: 10px 20px;
     background-color: white;
     display: flex;

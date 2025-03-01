@@ -28,3 +28,21 @@ textarea {
     display: flex;
     gap: 20px;
 }
+
+.image-container {
+    position: relative;
+}
+
+img {
+    width: 100%;
+}
+
+.delete-img-btn {
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 50px;
+    width: 50px;
+    border: none;
+    background-color: white;
+}
