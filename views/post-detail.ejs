@@ -55,6 +55,10 @@
         <textarea name="content" id="comment-input" placeholder="댓글을 입력하세요."></textarea>
         <button type="submit" id="register-btn">등록</button>
     </form>
+    <!-- <form class="reply-container">
+        <textarea name="content" id="reply-input" placeholder="댓글을 입력하세요."></textarea>
+        <button type="submit" id="reply-btn">등록</button>
+    </form> -->
     <div class="btn-container">
         <a href="/" class="back-to-main-btn">목록</a>
         <!-- 포스트 작성자나 어드민 유저만 포스트 수정&삭제 가능 -->
@@ -87,14 +91,23 @@
         // 하트 버튼 누를 시
         likeBtn.addEventListener("click", async (e) => {
             e.preventDefault();
-            const response = await fetch(`/post/${postId}/like`, {method: "POST"});
-            const {isLiked, likeCount} = await response.json();
-            if (isLiked) {
-                likeBtn.innerHTML = '<i class="fa-solid fa-heart"></i>';
-            } else {
-                likeBtn.innerHTML = '<i class="fa-regular fa-heart"></i>';
+            try {
+                const response = await fetch(`/post/${postId}/like`, {method: "POST"});
+                if (!response.ok) {
+                    throw new Error("하트 누르기 에러");
+                }
+                const {isLiked, likeCount} = await response.json();
+                if (isLiked) {
+                    likeBtn.innerHTML = '<i class="fa-solid fa-heart"></i>';
+                } else {
+                    likeBtn.innerHTML = '<i class="fa-regular fa-heart"></i>';
+                }
+                likeCountEl.textContent = likeCount;
+            } catch(error) {
+                console.err(error);
+                alert("에러가 발생했습니다. 잠시 후 다시 시도해주세요.");
             }
-            likeCountEl.textContent = likeCount;
+            
         })
 
         // 댓글 새로 랜더링하는 함수
@@ -116,29 +129,46 @@
         // 댓글 작성 시
         registerBtn.addEventListener("click", async(e) => {
             e.preventDefault();
-            const content = commentInput.value;
-            const response = await fetch(`/post/${postId}/comment/create`, {
-                method: "POST",
-                headers: {"Content-Type": "application/json"},
-                body: JSON.stringify({content})
-            });
-            commentInput.value = '';
-            const {comments, user} = await response.json();
-            renderComments(comments, user);
+            try {
+                const content = commentInput.value;
+                const response = await fetch(`/post/${postId}/comment/create`, {
+                    method: "POST",
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify({content})
+                });
+                if (!response.ok) {
+                    throw new Error("댓글 작성 에러");
+                }
+                commentInput.value = '';
+                const {comments, user} = await response.json();
+                renderComments(comments, user);
+            } catch(err) {
+                console.error(err);
+                alert("에러가 발생했습니다. 잠시 후 다시 시도해주세요.");
+            }
+            
         })
 
         // 댓글 삭제 시
         document.addEventListener("click", async (e) => {
             if (e.target.matches(".delete-comment-btn")) {
                 e.preventDefault();
-                if (confirm("댓글을 삭제하시겠습니까?")) {
-                    const commentId = Number(e.target.dataset.id);
-                    const response = await fetch(`/post/${postId}/comment/${commentId}/delete`, {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" }
-                    });
-                    const {comments, user} = await response.json();
-                    renderComments(comments, user);
+                try {
+                    if (confirm("댓글을 삭제하시겠습니까?")) {
+                        const commentId = Number(e.target.dataset.id);
+                        const response = await fetch(`/post/${postId}/comment/${commentId}/delete`, {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" }
+                        });
+                        if (!response.ok) {
+                            throw new Error("댓글 삭제 에러");
+                        }
+                        const {comments, user} = await response.json();
+                        renderComments(comments, user);
+                    }
+                } catch(err) {
+                    console.error(err);
+                    alert("에러가 발생했습니다. 잠시 후 다시 시도해주세요.")
                 }
             }
         })

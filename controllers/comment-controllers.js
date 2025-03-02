@@ -6,7 +6,7 @@ async function createComment(req, res) {
     const userId = req.user.id;
     const content = req.body.content;
     const postAuthor = (await db.getPost(postId)).author;
-    const comment = await db.createComment(userId, postId, content);
+    const comment = await db.createComment(userId, postId, content, null);
     const comments = await db.getCommentsByPostId(postId);
 
     if (userId !== postAuthor) {

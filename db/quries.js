@@ -4,8 +4,10 @@ const pool = require("./pool");
 async function createUser(username, password) {
     const SQL = `
     INSERT INTO users (username, password)
-    VALUES ($1, $2);`
-    await pool.query(SQL, [username, password]);
+    VALUES ($1, $2)
+    ON CONFLICT (username) DO NOTHING RETURNING *;`
+    const { rows } = await pool.query(SQL, [username, password]);
+    return rows;
 }
 
 async function createPost(userId, title, content) {
@@ -107,8 +109,8 @@ async function deleteImg(id) {
 
 // ================================================
 // 댓글
-async function createComment(userId, postId, content) {
-    const { rows } = await pool.query("INSERT INTO comments (user_id, post_id, content) VALUES ($1, $2, $3) RETURNING *;", [userId, postId, content]);
+async function createComment(userId, postId, content, parentCommentId) {
+    const { rows } = await pool.query("INSERT INTO comments (user_id, post_id, content, parent_comment_id) VALUES ($1, $2, $3, $4) RETURNING *;", [userId, postId, content, parentCommentId]);
     return rows[0];
 }
 

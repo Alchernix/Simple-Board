@@ -19,7 +19,9 @@ async function readNotification(req, res) {
     const notification = await db.getNotificationById(notificationId);
     // 해당 알림이 온 포스트로 이동
     if (notification.type === "comment") {
-        console.log("!")
+        await db.readNotification(notificationId);
+        res.redirect(`/post/${notification.post_id}`);
+    } else if (notification.type === "like") {
         await db.readNotification(notificationId);
         res.redirect(`/post/${notification.post_id}`);
     }

@@ -35,7 +35,8 @@ async function getPostDetail(req, res) {
         const likeCount = await db.countLikesByPostId(postId);
         res.render("post-detail", { post, user: req.user, images, comments, format, isLiked, likeCount: likeCount.count, notificationCount });
     } else {
-        res.render("sign-up", { isNonMemb: true });
+        req.session.membErr = true; // 회원만 게시글을 볼 수 있습니다
+        res.redirect("/sign-in");
     }
 
 }

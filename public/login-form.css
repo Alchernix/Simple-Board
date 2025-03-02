@@ -9,6 +9,11 @@ body {
     height: 100vh;
 }
 
+h3 {
+    margin: 0;
+    text-align: center;
+}
+
 form {
     border: 2px solid black;
     width: 300px;
@@ -19,7 +24,7 @@ form {
 }
 
 button,
-a {
+.cancel-btn {
     background-color: #eee;
     border: 1px solid black;
     border-radius: 10px;
@@ -32,7 +37,16 @@ a {
     box-sizing: border-box;
 }
 
+.auth-err,
+.dup-err {
+    color: red;
+}
+
 .memb-err {
     color: red;
     margin-bottom: 10px;
+}
+
+.sign-up-link {
+    align-self: center;
 }

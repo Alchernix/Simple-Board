@@ -6,15 +6,18 @@
     <title>Error Page</title>
     <style>
         body {
+            margin: 0;
+            padding: 0;
+            height: 100dvh;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
         }
     </style>
 </head>
 <body>
-    <h2>에러가 발생했어요!</h2>
-    <div>놀라지 말고 새로고침을 해보세요.</div>
-    <div>버그 발견시 @alchernix149로 연락주세요.</div>
+    <h2><%= title %></h2>
+    <div><%= message %> </div>
 </body>
 </html>

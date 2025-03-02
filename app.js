@@ -31,10 +31,15 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use("/", routes);
 
+app.use((req, res) => {
+    res.status(404);
+    res.render("error", { title: "404 not found", message: "존재하지 않는 페이지에 접속했어요. 뒤로가기를 눌러주세요." });
+})
+
 app.use((err, req, res, next) => {
     console.error(err);
-    res.status(500).send(err);
-    res.render("error");
+    res.status(500);
+    res.render("error", { title: "서버 에러", message: "놀라지 말고 새로고침을 해주세요. 버그 발생시 개발자에게 연락주세요." });
 })
 
 const PORT = process.env.PORT;
