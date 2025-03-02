@@ -24,6 +24,9 @@ async function readNotification(req, res) {
     } else if (notification.type === "like") {
         await db.readNotification(notificationId);
         res.redirect(`/post/${notification.post_id}`);
+    } else if (notification.type === "reply") {
+        await db.readNotification(notificationId);
+        res.redirect(`/post/${notification.post_id}`);
     }
 }
 

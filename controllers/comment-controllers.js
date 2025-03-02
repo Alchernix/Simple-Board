@@ -22,6 +22,7 @@ async function createReply(req, res) {
     const userId = req.user.id;
     const content = req.body.replyContent;
     const originalCommentId = Number(req.query.originalComment);
+    const originalCommentAuthor = (await db.getCommentById(originalCommentId)).user_id;
     const postAuthor = (await db.getPost(postId)).author;
     const comment = await db.createComment(userId, postId, content, originalCommentId);
     const comments = await loadComments(postId);
@@ -29,6 +30,8 @@ async function createReply(req, res) {
     if (userId !== postAuthor) {
         // 자기 글에 댓글 단 게 아닐 때만 알림가게
         await db.createNotification(postAuthor, "comment", postId, userId, comment.id);
+    } else if (userId !== originalCommentAuthor) {
+        await db.createNotification(postAuthor, "reply", postId, userId, comment.id);
     }
 
     res.json({ comments, postId, user: req.user });

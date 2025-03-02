@@ -29,6 +29,10 @@
                         <div><%= notification.from_user %> 님이 내 게시글에 <i class="fa-solid fa-heart" style="color: red;"></i>를 남겼습니다.</div>
                         <!-- <div><%= notification.content %></div> -->
                         <div><%= format(new Date(notification.created_at), "yyyy.MM.dd") %></div>
+                    <% } else if (notification.type === "reply") { %>
+                        <div><%= notification.from_user %> 님이 내 댓글에 대댓글을 남겼습니다:</div>
+                        <div><%= notification.content %></div>
+                        <div><%= format(new Date(notification.created_at), "yyyy.MM.dd") %></div>
                     <% } %>    
                 </a>
             </li>

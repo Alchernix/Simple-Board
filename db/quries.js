@@ -114,6 +114,11 @@ async function createComment(userId, postId, content, parentCommentId) {
     return rows[0];
 }
 
+async function getCommentById(id) {
+    const { rows } = await pool.query("SELECT * FROM comments WHERE id = $1", [id]);
+    return rows[0];
+}
+
 async function getCommentsByPostId(id) {
     const SQL = `
     SELECT comments.*, users.username
@@ -230,6 +235,7 @@ module.exports = {
     getImagesByPostId,
     deleteImg,
     createComment,
+    getCommentById,
     getCommentsByPostId,
     countCommentsByPostId,
     deleteComment,
