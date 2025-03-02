@@ -38,6 +38,7 @@ router.post("/image/:imgId/delete", asyncHandler(postControllers.deleteImg));
 
 // comments
 router.post("/post/:postId/comment/create", asyncHandler(commentControllers.createComment));
+router.post("/post/:postId/reply/create", asyncHandler(commentControllers.createReply));
 router.post("/post/:postId/comment/:commentId/delete", asyncHandler(commentControllers.deleteComment));
 
 //likes

@@ -116,7 +116,7 @@ async function createComment(userId, postId, content, parentCommentId) {
 
 async function getCommentsByPostId(id) {
     const SQL = `
-    SELECT comments.id, comments.user_id, comments.content, comments.created_at, users.username
+    SELECT comments.*, users.username
     FROM comments
     INNER JOIN users
     ON users.id = comments.user_id

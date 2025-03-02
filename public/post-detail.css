@@ -108,7 +108,8 @@ img {
 
 /* 댓글 */
 
-.comment-container {
+.comment-container,
+.reply-container {
     background-color: #eee;
     box-sizing: border-box;
     /* margin-top: 7px; */
@@ -120,12 +121,22 @@ img {
     padding: 20px 10px;
 }
 
-#comment-input {
+#comment-input,
+#reply-input {
     flex-grow: 1;
     /* height: 70px; */
 }
 
 .comment {
+    cursor: pointer;
+}
+
+.reply {
+    background-color: aqua;
+}
+
+.comment,
+.reply {
     display: flex;
     flex-direction: column;
     gap: 10px;
@@ -137,4 +148,8 @@ img {
     display: flex;
     justify-content: space-between;
     align-items: center;
+}
+
+.reply-container {
+    /* display: none; */
 }

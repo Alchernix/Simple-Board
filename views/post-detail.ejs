@@ -39,7 +39,7 @@
     </main>
     <div class="comments-container" id="comments-container">
         <% comments.forEach(comment => { %>
-            <div class="comment">
+            <div class="comment" data-id="<%= comment.id %>">
                 <div class="username-closeBtn">
                     <div><%= comment.username %></div>
                     <% if (user.id === comment.user_id || user.is_admin) { %>
@@ -51,14 +51,10 @@
             </div>
         <% }) %>
     </div>
-    <form class="comment-container">
-        <textarea name="content" id="comment-input" placeholder="댓글을 입력하세요."></textarea>
+    <form class="comment-container" id="comment-form">
+        <textarea name="content" id="comment-input" placeholder="댓글을 입력하세요." required></textarea>
         <button type="submit" id="register-btn">등록</button>
     </form>
-    <!-- <form class="reply-container">
-        <textarea name="content" id="reply-input" placeholder="댓글을 입력하세요."></textarea>
-        <button type="submit" id="reply-btn">등록</button>
-    </form> -->
     <div class="btn-container">
         <a href="/" class="back-to-main-btn">목록</a>
         <!-- 포스트 작성자나 어드민 유저만 포스트 수정&삭제 가능 -->
@@ -85,8 +81,10 @@
         const likeCountEl = document.querySelector("#like-count");
         const postId = Number(likeBtn.dataset.postid);
         const commentsContainer = document.querySelector("#comments-container");
-        const registerBtn = document.querySelector("#register-btn");
+        const commentForm = document.querySelector("#comment-form");
+        // const registerBtn = document.querySelector("#register-btn");
         const commentInput = document.querySelector("#comment-input");
+        const replyContainer = document.querySelector("#reply-container");
 
         // 하트 버튼 누를 시
         likeBtn.addEventListener("click", async (e) => {
@@ -112,8 +110,9 @@
 
         // 댓글 새로 랜더링하는 함수
         function renderComments(comments, user) {
+            console.log(comments)
             commentsContainer.innerHTML = comments.map(comment => {
-                return `<div class="comment">
+                let html = `<div class="comment" data-id="${comment.id}">
                     <div class="username-closeBtn">
                         <div>${comment.username}</div>
                         ${(user.id === comment.user_id || user.is_admin)
@@ -123,11 +122,24 @@
                     <pre>${comment.content}</pre>
                     <div>${format(new Date(comment.created_at))}</div>
                 </div>`
+                comment.replies.forEach(reply => {
+                    html += `<div class="reply"">
+                    <div class="username-closeBtn">
+                        <div>${reply.username}</div>
+                        ${(user.id === reply.user_id || user.is_admin)
+                        ? `<button class="delete-comment-btn" data-id=${reply.id}>X</button>`
+                        : '' }
+                    </div>
+                    <pre>${reply.content}</pre>
+                    <div>${format(new Date(reply.created_at))}</div>
+                </div>`
+                })
+                return html;
             }).join('');
         }
 
         // 댓글 작성 시
-        registerBtn.addEventListener("click", async(e) => {
+        commentForm.addEventListener("submit", async(e) => {
             e.preventDefault();
             try {
                 const content = commentInput.value;
@@ -140,18 +152,18 @@
                     throw new Error("댓글 작성 에러");
                 }
                 commentInput.value = '';
-                const {comments, user} = await response.json();
-                renderComments(comments, user);
+                const {nestedComments, user} = await response.json();
+                renderComments(nestedComments, user);
             } catch(err) {
                 console.error(err);
                 alert("에러가 발생했습니다. 잠시 후 다시 시도해주세요.");
             }
-            
         })
 
-        // 댓글 삭제 시
+        
         document.addEventListener("click", async (e) => {
             if (e.target.matches(".delete-comment-btn")) {
+                // 댓글 삭제
                 e.preventDefault();
                 try {
                     if (confirm("댓글을 삭제하시겠습니까?")) {
@@ -163,14 +175,57 @@
                         if (!response.ok) {
                             throw new Error("댓글 삭제 에러");
                         }
-                        const {comments, user} = await response.json();
-                        renderComments(comments, user);
+                        const {nestedComments, user} = await response.json();
+                        renderComments(nestedComments, user);
                     }
                 } catch(err) {
                     console.error(err);
                     alert("에러가 발생했습니다. 잠시 후 다시 시도해주세요.")
                 }
-            }
+            } else if (e.target.closest(".comment")) {
+                // 대댓글 작성창 띄우기
+                // <form class="reply-container" id="reply-form">
+                //     <textarea name="replyContent" id="reply-input" placeholder="댓글을 입력하세요."></textarea>
+                //     <button type="submit" id="reply-btn">등록</button>
+                // </form>
+                let replyContainer = document.querySelector("#reply-form");
+                if (replyContainer) {
+                    replyContainer.remove();
+                }
+
+                replyContainer = document.createElement("form");
+                replyContainer.classList.add("reply-container");
+                replyContainer.id = "reply-form";
+                replyContainer.dataset.parentId = e.target.closest(".comment").dataset.id;
+                replyContainer.innerHTML = `
+                <textarea name="replyContent" id="reply-input" placeholder="대댓글을 입력하세요." required></textarea>
+                <button type="submit" id="reply-btn">등록</button>
+                `
+                // 대댓글 작성 시
+                replyContainer.addEventListener("submit", async (e) => {
+                    e.preventDefault();
+                        try {
+                            const replyInput = document.querySelector("#reply-input");
+                            const replyContent = replyInput.value;
+                            const response = await fetch(`/post/${postId}/reply/create?originalComment=${replyContainer.dataset.parentId}`, {
+                                method: "POST",
+                                headers: {"Content-Type": "application/json"},
+                                body: JSON.stringify({replyContent})
+                            });
+                            if (!response.ok) {
+                                throw new Error("댓글 작성 에러");
+                            }
+                            replyInput.value = '';
+                            const {nestedComments, user} = await response.json();
+                            renderComments(nestedComments, user);
+                        } catch(err) {
+                            console.error(err);
+                            alert("에러가 발생했습니다. 잠시 후 다시 시도해주세요.");
+                        }
+                    })
+
+                e.target.closest(".comment").after(replyContainer);
+            } 
         })
     </script>
 </body>
