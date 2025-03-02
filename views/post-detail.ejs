@@ -38,18 +38,7 @@
         
     </main>
     <div class="comments-container" id="comments-container">
-        <% comments.forEach(comment => { %>
-            <div class="comment" data-id="<%= comment.id %>">
-                <div class="username-closeBtn">
-                    <div><%= comment.username %></div>
-                    <% if (user.id === comment.user_id || user.is_admin) { %>
-                        <button type="submit" class="delete-comment-btn" data-id="<%= comment.id %>">X</button>
-                    <% } %>
-                </div>
-                <pre><%= comment.content %></pre>
-                <div><%= format(new Date(comment.created_at), "yyyy.MM.dd HH:mm:ss") %></div>
-            </div>
-        <% }) %>
+        <!-- 댓글 오는 곳 -->
     </div>
     <form class="comment-container" id="comment-form">
         <textarea name="content" id="comment-input" placeholder="댓글을 입력하세요." required></textarea>
@@ -82,9 +71,27 @@
         const postId = Number(likeBtn.dataset.postid);
         const commentsContainer = document.querySelector("#comments-container");
         const commentForm = document.querySelector("#comment-form");
-        // const registerBtn = document.querySelector("#register-btn");
         const commentInput = document.querySelector("#comment-input");
         const replyContainer = document.querySelector("#reply-container");
+
+        // 첫 로드 시 댓글 가져오기
+        async function main() {
+            try {
+                const response = await fetch(`/post/${postId}/comment`, {
+                    method: "GET",
+                });
+                if (!response.ok) {
+                    throw new Error("댓글 작성 에러");
+                }
+                const {comments, user} = await response.json();
+                renderComments(comments, user);
+            } catch(err) {
+                console.error(err);
+                alert("에러가 발생했습니다. 잠시 후 다시 시도해주세요.");
+            }
+        }
+
+        main();
 
         // 하트 버튼 누를 시
         likeBtn.addEventListener("click", async (e) => {
@@ -110,29 +117,43 @@
 
         // 댓글 새로 랜더링하는 함수
         function renderComments(comments, user) {
-            console.log(comments)
             commentsContainer.innerHTML = comments.map(comment => {
-                let html = `<div class="comment" data-id="${comment.id}">
-                    <div class="username-closeBtn">
-                        <div>${comment.username}</div>
-                        ${(user.id === comment.user_id || user.is_admin)
-                        ? `<button class="delete-comment-btn" data-id=${comment.id}>X</button>`
-                        : '' }
-                    </div>
-                    <pre>${comment.content}</pre>
-                    <div>${format(new Date(comment.created_at))}</div>
-                </div>`
+                let html = '';
+                if (!comment.is_deleted) {
+                    html = `<div class="comment" data-id="${comment.id}">
+                        <div class="username-closeBtn">
+                            <div class="username">${comment.username}</div>
+                            ${(user.id === comment.user_id || user.is_admin)
+                            ? `<button class="delete-comment-btn" data-id=${comment.id}>X</button>`
+                            : '' }
+                        </div>
+                        <pre>${comment.content}</pre>
+                        <div>${format(new Date(comment.created_at))}</div>
+                    </div>`
+                } else if (comment.replies.length > 0) {
+                    // 대댓글이 있을 시
+                    html = `
+                    <div class="deleted">
+                        삭제된 댓글입니다.
+                    <div>
+                    `
+                }
+                
                 comment.replies.forEach(reply => {
-                    html += `<div class="reply"">
-                    <div class="username-closeBtn">
-                        <div>${reply.username}</div>
-                        ${(user.id === reply.user_id || user.is_admin)
-                        ? `<button class="delete-comment-btn" data-id=${reply.id}>X</button>`
-                        : '' }
-                    </div>
-                    <pre>${reply.content}</pre>
-                    <div>${format(new Date(reply.created_at))}</div>
-                </div>`
+                    if (!reply.is_deleted) {
+                        html += `<div class="reply"">
+                        <i class="fa-solid fa-arrow-right-long reply-arrow"></i>
+                        <div class="username-closeBtn">
+                            <div class="username">${reply.username}</div>
+                            ${(user.id === reply.user_id || user.is_admin)
+                            ? `<button class="delete-comment-btn" data-id=${reply.id}>X</button>`
+                            : '' }
+                        </div>
+                        <pre>${reply.content}</pre>
+                        <div>${format(new Date(reply.created_at))}</div>
+                    </div>`    
+                    }
+                    
                 })
                 return html;
             }).join('');
@@ -152,8 +173,8 @@
                     throw new Error("댓글 작성 에러");
                 }
                 commentInput.value = '';
-                const {nestedComments, user} = await response.json();
-                renderComments(nestedComments, user);
+                const {comments, user} = await response.json();
+                renderComments(comments, user);
             } catch(err) {
                 console.error(err);
                 alert("에러가 발생했습니다. 잠시 후 다시 시도해주세요.");
@@ -175,8 +196,8 @@
                         if (!response.ok) {
                             throw new Error("댓글 삭제 에러");
                         }
-                        const {nestedComments, user} = await response.json();
-                        renderComments(nestedComments, user);
+                        const {comments, user} = await response.json();
+                        renderComments(comments, user);
                     }
                 } catch(err) {
                     console.error(err);
@@ -216,8 +237,8 @@
                                 throw new Error("댓글 작성 에러");
                             }
                             replyInput.value = '';
-                            const {nestedComments, user} = await response.json();
-                            renderComments(nestedComments, user);
+                            const {comments, user} = await response.json();
+                            renderComments(comments, user);
                         } catch(err) {
                             console.error(err);
                             alert("에러가 발생했습니다. 잠시 후 다시 시도해주세요.");

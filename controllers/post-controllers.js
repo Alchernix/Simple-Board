@@ -1,5 +1,6 @@
 // 포스트 + 이미지 생성/수정/삭제/상세보기
 const db = require("../db/quries");
+const { loadComments } = require("./comment-controllers");
 const { format } = require("date-fns");
 
 function createPostGet(req, res) {
@@ -29,11 +30,11 @@ async function getPostDetail(req, res) {
         // const notifications = await db.getNotifications(userId);
         const post = await db.getPost(postId);
         const images = await db.getImagesByPostId(postId);
-        const comments = await db.getCommentsByPostId(postId);
+        // const comments = await loadComments(postId);
         post.created_at = format(new Date(post.created_at), "yyyy.MM.dd HH:mm:ss");
         const isLiked = await db.isLiked(userId, postId);
         const likeCount = await db.countLikesByPostId(postId);
-        res.render("post-detail", { post, user: req.user, images, comments, format, isLiked, likeCount: likeCount.count, notificationCount });
+        res.render("post-detail", { post, user: req.user, images, format, isLiked, likeCount: likeCount.count, notificationCount });
     } else {
         req.session.membErr = true; // 회원만 게시글을 볼 수 있습니다
         res.redirect("/sign-in");

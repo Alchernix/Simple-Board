@@ -124,15 +124,6 @@ img {
 #comment-input,
 #reply-input {
     flex-grow: 1;
-    /* height: 70px; */
-}
-
-.comment {
-    cursor: pointer;
-}
-
-.reply {
-    background-color: aqua;
 }
 
 .comment,
@@ -144,10 +135,30 @@ img {
     border-bottom: 2px solid black;
 }
 
+.comment {
+    cursor: pointer;
+}
+
+.reply {
+    position: relative;
+    box-sizing: border-box;
+    padding-left: 30px;
+}
+
+.reply-arrow {
+    position: absolute;
+    top: 15px;
+    left: 5px;
+}
+
 .username-closeBtn {
     display: flex;
     justify-content: space-between;
     align-items: center;
+}
+
+.username {
+    font-weight: bold;
 }
 
 .reply-container {

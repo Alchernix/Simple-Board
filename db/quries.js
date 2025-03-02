@@ -28,7 +28,7 @@ async function getAllPosts() {
     INNER JOIN users
     ON posts.author = users.id
     LEFT JOIN comments
-    ON posts.id = comments.post_id
+    ON posts.id = comments.post_id AND comments.is_deleted = false
     LEFT JOIN likes
     ON posts.id = likes.post_id
     GROUP BY posts.id, posts.title, users.username, posts.created_at
@@ -130,14 +130,23 @@ async function getCommentsByPostId(id) {
 async function countCommentsByPostId(id) {
     const SQL = `
     SELECT count(*) FROM comments
-    WHERE post_id = $1;
+    WHERE post_id = $1 AND is_deleted = false;
     `
     const { rows } = await pool.query(SQL, [id]);
     return rows[0];
 }
 
 async function deleteComment(id) {
-    await pool.query("DELETE from comments WHERE id = $1", [id]);
+    // await pool.query("DELETE from comments WHERE id = $1", [id]);
+    const { rows } = await pool.query("SELECT * FROM comments WHERE id = $1", [id]);
+    const comment = rows[0];
+    if (comment.parent_comment_id) {
+        // 대댓글이면 그냥 삭제
+        await pool.query("DELETE FROM comments WHERE id = $1", [id]);
+    } else {
+        // 대댓글 처리를 위해 실제로 지우지는 않고 화면상에서만 표시하지 않음
+        await pool.query("UPDATE comments SET is_deleted = true WHERE id = $1", [id]);
+    }
 }
 
 // ================================================
