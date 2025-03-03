@@ -1,6 +1,12 @@
 // 포스트 + 이미지 생성/수정/삭제/상세보기
 const db = require("../db/quries");
 const { format } = require("date-fns");
+const { body, validationResult } = require("express-validator");
+
+// const validatePost = [
+//     body("title").trim()
+//         .isLength({min: 1, max: 50})
+// ];
 
 function createPostGet(req, res) {
     res.render("post-editor", { title: "게시글 작성" });

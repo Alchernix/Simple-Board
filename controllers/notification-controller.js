@@ -30,8 +30,15 @@ async function readNotification(req, res) {
     }
 }
 
+async function deleteNotifications(req, res) {
+    const userId = req.user.id;
+    await db.deleteNotifications(userId);
+    res.redirect(`/user/${userId}/notification`);
+}
+
 module.exports = {
     notificationPageGet,
     readAllNotifications,
-    readNotification
+    readNotification,
+    deleteNotifications,
 }

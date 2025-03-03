@@ -15,6 +15,8 @@
         
         <% if (dupErr) { %>
             <div class="dup-err">이미 존재하는 사용자 이름입니다.</div>
+        <% } else if (lenErr) { %>
+            <div class="len-err">사용자 이름은 1글자 이상 10글자 이하여야 합니다.</div>
         <% } %>
 
         <label for="password">비밀번호: </label>

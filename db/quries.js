@@ -21,7 +21,7 @@ async function createPost(userId, title, content) {
 // ================================================
 // 포스트
 //최근 게시물이 위로 오도록 역순으로 조회
-async function getAllPosts() {
+async function getAllPosts(limit, offset) {
     const SQL = `
     SELECT posts.id, posts.title, users.username, posts.created_at, count(DISTINCT comments.id) AS comment_count, count(DISTINCT likes.id) AS like_count
     FROM posts
@@ -32,13 +32,45 @@ async function getAllPosts() {
     LEFT JOIN likes
     ON posts.id = likes.post_id
     GROUP BY posts.id, posts.title, users.username, posts.created_at
-    ORDER BY posts.id DESC;`
-    const { rows } = await pool.query(SQL);
+    ORDER BY posts.id DESC
+    LIMIT $1 OFFSET $2;`
+    const { rows } = await pool.query(SQL, [limit, offset]);
     return rows;
 }
 
+async function getTotalPostNumbers() {
+    const { rows } = await pool.query("SELECT COUNT(*) FROM posts;");
+    return rows[0];
+}
+
+async function getSearchedPostNumbers(searchType, searchKeyword) {
+    let search;
+    switch (searchType) {
+        case 'title+content':
+            search = "WHERE posts.title ILIKE '%' || $1 || '%' OR posts.content ILIKE '%' || $1 || '%'";
+            break;
+        case 'title':
+            search = "WHERE posts.title ILIKE '%' || $1 || '%'";
+            break;
+        case 'content':
+            search = "WHERE posts.content ILIKE '%' || $1 || '%'";
+            break;
+        case 'user':
+            search = "WHERE users.username ILIKE '%' || $1 || '%'";
+    }
+    const SQL = `
+    SELECT COUNT(DISTINCT posts.id)
+    FROM posts
+    INNER JOIN users
+    ON posts.author = users.id
+    ${search}
+    `
+    const { rows } = await pool.query(SQL, [searchKeyword]);
+    return rows[0];
+}
+
 // 포스트 검색기능
-async function searchPosts(searchType, searchKeyword) {
+async function searchPosts(searchType, searchKeyword, limit, offset) {
     let search;
     switch (searchType) {
         case 'title+content':
@@ -65,8 +97,9 @@ async function searchPosts(searchType, searchKeyword) {
     ${search}
     GROUP BY posts.id, posts.title, users.username, posts.created_at
     ORDER BY posts.id DESC
+    LIMIT $2 OFFSET $3;
     `
-    const { rows } = await pool.query(SQL, [searchKeyword]);
+    const { rows } = await pool.query(SQL, [searchKeyword, limit, offset]);
     return rows;
 }
 
@@ -223,11 +256,17 @@ async function readAllNotifications(userId) {
     await pool.query("UPDATE notifications SET is_read = true WHERE user_id = $1", [userId]);
 }
 
+async function deleteNotifications(userId) {
+    await pool.query("DELETE FROM notifications WHERE user_id = $1", [userId]);
+}
+
 module.exports = {
     createUser,
     createPost,
     getAllPosts,
+    getTotalPostNumbers,
     searchPosts,
+    getSearchedPostNumbers,
     getPost,
     editPost,
     deletePost,
@@ -249,4 +288,5 @@ module.exports = {
     getNotificationById,
     readNotification,
     readAllNotifications,
+    deleteNotifications,
 }

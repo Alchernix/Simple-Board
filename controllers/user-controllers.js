@@ -2,14 +2,28 @@
 const bcrypt = require("bcrypt");
 const db = require("../db/quries");
 const passport = require("../passport");
+const { body, validationResult } = require("express-validator");
+
+const validateUser = [
+    body("username").trim()
+        .isLength({ min: 1, max: 10 }).withMessage("사용자 이름은 10글자 이하여야 합니다.")
+];
 
 function signupPageGet(req, res) {
     const dupErr = req.session.dupErr ? true : false;
+    const lenErr = req.session.lenErr ? true : false;
     req.session.dupErr = false;
-    res.render("sign-up", { dupErr });
+    req.session.lenErr = false;
+    res.render("sign-up", { dupErr, lenErr });
 }
 
 async function signupPagePost(req, res, next) {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        req.session.lenErr = true;
+        return res.redirect("/sign-up");
+    }
+
     const username = req.body.username;
     const password = req.body.password;
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -53,6 +67,7 @@ function logoutGet(req, res, next) {
 };
 
 module.exports = {
+    validateUser,
     signupPageGet,
     signupPagePost,
     signinPageGet,

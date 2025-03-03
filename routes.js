@@ -16,7 +16,7 @@ router.get("/", asyncHandler(controllers.indexPageGet));
 
 // users
 router.get("/sign-up", asyncHandler(userControllers.signupPageGet));
-router.post("/sign-up", asyncHandler(userControllers.signupPagePost));
+router.post("/sign-up", userControllers.validateUser, asyncHandler(userControllers.signupPagePost));
 
 router.get("/sign-in", asyncHandler(userControllers.signinPageGet));
 router.post("/sign-in", asyncHandler(userControllers.signinPagePost));
@@ -49,5 +49,6 @@ router.post("/post/:postId/like", asyncHandler(likeControllers.like));
 router.get("/user/:userId/notification", asyncHandler(notificationControllers.notificationPageGet));
 router.post("/user/:userId/notification", asyncHandler(notificationControllers.readAllNotifications));
 router.get("/user/:userId/notification/:notificationId", asyncHandler(notificationControllers.readNotification));
+router.post("/user/:userId/notification/delete", asyncHandler(notificationControllers.deleteNotifications));
 
 module.exports = router;

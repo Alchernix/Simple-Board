@@ -5,11 +5,20 @@ main {
 
 .create-post-btn {
     align-self: flex-end;
-    background-color: var(--btnColor-default);
-    border: 2px solid var(--borderColor-default);
+    background-color: var(--highlight-blue);
     padding: 5px 10px;
     border-radius: 5px;
     margin: 15px 0 0 0;
+}
+
+.create-post-btn-mobile {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: var(--highlight-blue);
+    display: none;
+    border-radius: 50%;
+    padding: 15px;
 }
 
 /* 테이블 */
@@ -68,4 +77,36 @@ td:nth-child(4) {
 .comment-count {
     display: inline;
     color: var(--textColor-gray);
+}
+
+.paging {
+    margin: 15px 0;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.currentPage {
+    font-weight: bold;
+    color: var(--highlight-blue);
+}
+
+@media only screen and (max-width: 500px) {
+    .create-post-btn {
+        display: none;
+    }
+
+    .create-post-btn-mobile {
+        display: flex;
+    }
+
+    .table-container {
+        margin: 0;
+        border-radius: 0;
+        border-top: none;
+    }
+
+    th {
+        padding: 5px 0;
+    }
 }

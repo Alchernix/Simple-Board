@@ -52,7 +52,8 @@ button,
 }
 
 .auth-err,
-.dup-err {
+.dup-err,
+.len-err {
     color: var(--highlight-red);
 }
 

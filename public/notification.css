@@ -1,18 +1,29 @@
 .title-container {
     display: flex;
-    justify-content: space-between;
+    /* justify-content: space-between; */
     align-items: center;
     border-bottom: 2px solid var(--borderColor-default);
+    gap: 10px;
 }
 
-.read-all-btn {
+.read-all-btn,
+.delete-all-btn {
     background-color: var(--btnColor-default);
-    border: 2px solid var(--borderColor-default);
+    border: 1px solid var(--borderColor-default);
     padding: 5px 10px;
     border-radius: 5px;
     color: var(--textColor-default);
     cursor: pointer;
     font-family: inherit;
+}
+
+.delete-all-btn-container {
+    margin-left: auto;
+}
+
+.delete-all-btn {
+    background-color: var(--highlight-red);
+    border: none;
 }
 
 .notification-container {
