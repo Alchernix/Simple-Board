@@ -1,0 +1,71 @@
+main {
+    display: flex;
+    flex-direction: column;
+}
+
+.create-post-btn {
+    align-self: flex-end;
+    background-color: var(--btnColor-default);
+    border: 2px solid var(--borderColor-default);
+    padding: 5px 10px;
+    border-radius: 5px;
+    margin: 15px 0 0 0;
+}
+
+/* 테이블 */
+table {
+    border-collapse: collapse;
+    border-style: hidden;
+    width: 100%;
+}
+
+.table-container {
+    border-radius: 20px;
+    border: 1px solid var(--borderColor-default);
+    overflow: hidden;
+    margin-top: 15px;
+}
+
+th {
+    background-color: var(--btnColor-default);
+    padding: 10px 0;
+}
+
+td {
+    padding: 5px 0;
+}
+
+td,
+th {
+    border-top: 1px solid var(--borderColor-default);
+    border-bottom: 1px solid var(--borderColor-default);
+    text-align: center;
+    height: 25px;
+}
+
+th:nth-child(1),
+td:nth-child(1),
+th:nth-child(5),
+td:nth-child(5) {
+    width: 10%;
+}
+
+td:nth-child(2) {
+    text-align: left;
+}
+
+th:nth-child(3),
+td:nth-child(3),
+th:nth-child(4),
+td:nth-child(4) {
+    width: 15%;
+}
+
+.post-title:hover {
+    text-decoration: underline;
+}
+
+.comment-count {
+    display: inline;
+    color: var(--textColor-gray);
+}

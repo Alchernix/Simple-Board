@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>sign-in</title>
-    <link rel="stylesheet" href="login-form.css">
+    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="/login-form.css">
 </head>
 <body>
     <% if (membErr) { %>
@@ -26,7 +27,7 @@
             <div class="auth-err">비밀번호가 올바르지 않습니다.</div>
         <% } %>
 
-        <button type="submit">확인</button>
+        <button type="submit" class="confirm-btn">확인</button>
         <a href="/" class="cancel-btn">취소</a>
         <% if (membErr) { %>
             <a href="/sign-up" class="sign-up-link">회원가입</a>

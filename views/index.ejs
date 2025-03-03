@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Simple Board</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="index.css">
     <link rel="stylesheet" href="header.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
@@ -15,37 +16,39 @@
         <% if(locals.user) { %>
             <a href="/post-editor" class="create-post-btn">글쓰기</a>
         <% } %>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>번호</th>
+                        <th>제목</th>
+                        <th>작성자</th>
+                        <th>작성일</th>
+                        <th>하트</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% if(locals.posts) { %>
+                        <% posts.forEach(post => { %>
+                            <tr>
+                                <td><%= post.id %></td>
+                                <td>
+                                    <a href="/post/<%= post.id %>" class="post-title">
+                                        <%= post.title %>
+                                    </a>
+                                    <div class="comment-count">[<%= post.comment_count %>]</div>
+                                </td>
+                                <td><%= post.username %></td>
+                                <td><%= format(new Date(post.created_at), "yyyy.MM.dd") %></td>
+                                <!-- todo -->
+                                <td><%= post.like_count %></td>
+                            </tr>
+                        <% }) %>
+                    <% } %>
+                </tbody>
+            </table>    
+        </div>
         
-        <table>
-            <thead>
-                <tr>
-                    <th>번호</th>
-                    <th>제목</th>
-                    <th>작성자</th>
-                    <th>작성일</th>
-                    <th>하트</th>
-                </tr>
-            </thead>
-            <tbody>
-                <% if(locals.posts) { %>
-                    <% posts.forEach(post => { %>
-                        <tr>
-                            <td><%= post.id %></td>
-                            <td>
-                                <a href="/post/<%= post.id %>" class="post-title">
-                                    <%= post.title %>
-                                </a>
-                                <div class="comment-count">[<%= post.comment_count %>]</div>
-                            </td>
-                            <td><%= post.username %></td>
-                            <td><%= format(new Date(post.created_at), "yyyy.MM.dd") %></td>
-                            <!-- todo -->
-                            <td><%= post.like_count %></td>
-                        </tr>
-                    <% }) %>
-                <% } %>
-            </tbody>
-        </table>
     </main>
     <script src="/header.js"></script>
 </body>

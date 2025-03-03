@@ -15,7 +15,8 @@ h3 {
 }
 
 form {
-    border: 2px solid black;
+    border: 2px solid var(--borderColor-default);
+    border-radius: 20px;
     width: 300px;
     display: flex;
     flex-direction: column;
@@ -23,13 +24,21 @@ form {
     padding: 20px;
 }
 
+input {
+    background-color: var(--bgColor-default);
+    border: 2px solid var(--borderColor-default);
+    color: var(--textColor-default);
+    border-radius: 10px;
+    padding: 5px;
+}
+
 button,
 .cancel-btn {
-    background-color: #eee;
-    border: 1px solid black;
+    background-color: var(--btnColor-default);
+    border: 1px solid var(--borderColor-default);
     border-radius: 10px;
     text-align: center;
-    color: black;
+    color: var(--textColor-default);
     text-decoration: none;
     font-size: 14px;
     cursor: pointer;
@@ -37,16 +46,23 @@ button,
     box-sizing: border-box;
 }
 
+.confirm-btn {
+    background-color: var(--highlight-blue);
+    border: none;
+}
+
 .auth-err,
 .dup-err {
-    color: red;
+    color: var(--highlight-red);
 }
 
 .memb-err {
-    color: red;
+    color: var(--highlight-red);
     margin-bottom: 10px;
 }
 
 .sign-up-link {
     align-self: center;
+    color: var(--highlight-blue);
+    text-decoration: underline;
 }

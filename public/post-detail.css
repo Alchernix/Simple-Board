@@ -1,39 +1,53 @@
-body {
-    margin: 0;
-    padding: 20px 5vw;
-}
-
-main {
+.main {
     display: flex;
     flex-direction: column;
     width: 100%;
-    border-top: 2px solid black;
-    border-bottom: 2px solid black;
+    /* border-top: 2px solid #3d444d; */
+    border-bottom: 2px solid var(--borderColor-default);
     position: relative;
+}
+
+.title,
+.detail-container,
+.content {
+    box-sizing: border-box;
+    padding: 7px 5px;
+}
+
+.title,
+.detail-container {
+    background-color: var(--btnColor-default);
 }
 
 .title {
     margin: 0;
-    padding: 7px 0;
 }
 
 .detail-container {
     display: flex;
     justify-content: space-between;
-    border-bottom: 1px solid gray;
-    padding-bottom: 7px;
+    border-bottom: 2px solid var(--borderColor-default);
+    padding-top: 0;
 }
 
 pre {
     font-family: inherit;
     font-size: inherit;
-    margin: 0 0 7px 0;
 }
 
 .content {
     width: 100%;
-    padding: 7px 0;
     min-height: 40vh;
+}
+
+.content pre {
+    margin: 0 0 7px 0;
+}
+
+.images-container {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
 }
 
 img {
@@ -41,17 +55,16 @@ img {
 }
 
 /* 버튼들 */
-
 .btn-container {
-    margin-top: 7px;
+    margin: 20px 0;
     display: flex;
     gap: 10px;
 }
 
 .back-to-main-btn {
     margin-right: auto;
-    background-color: gray;
-    color: white;
+    background-color: var(--btnColor-default);
+    color: var(--textColor-default);
 }
 
 .back-to-main-btn,
@@ -60,49 +73,46 @@ img {
     display: inline-block;
     text-decoration: none;
     padding: 5px 8px;
-    border: 1px solid black;
-    font-size: 12pt;
+    border: none;
+    font-size: 14px;
     border-radius: 5px;
-    font-weight: bold;
     cursor: pointer;
+    font-family: inherit;
 }
 
 .edit-btn {
-    color: black;
-    background-color: lightgreen;
+    color: var(--textColor-default);
+    background-color: var(--highlight-green);
 }
 
 .delete-btn {
-    color: white;
-    background-color: orangered;
+    color: var(--textColor-default);
+    background-color: var(--highlight-red);
 }
 
 .like-btn-container {
-    /* position: absolute;
-    bottom: 20px;
-    left: 50%;
-    transform: translate(-50%); */
     align-self: center;
     margin: 20px 0;
     padding: 10px 20px;
-    background-color: white;
+    background-color: var(--bgColor-default);
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    border: 1px solid gray;
+    border: 2px solid var(--borderColor-default);
+    border-radius: 10px;
 }
 
 .like-btn {
-    background-color: white;
+    background-color: var(--bgColor-default);
     cursor: pointer;
-    border: 1px solid red;
+    border: 2px solid var(--highlight-red);
     padding: 10px;
     border-radius: 50%;
 }
 
 .fa-heart {
-    color: red;
+    color: var(--highlight-red);
     font-size: 32px;
 }
 
@@ -110,20 +120,53 @@ img {
 
 .comment-container,
 .reply-container {
-    background-color: #eee;
+    background-color: var(--bgColor-default);
     box-sizing: border-box;
     /* margin-top: 7px; */
     display: flex;
     flex-direction: column;
     width: 100%;
-    height: 120px;
-    border-bottom: 2px solid black;
+    height: 150px;
+    border-bottom: 2px solid var(--borderColor-default);
     padding: 20px 10px;
+}
+
+.comment pre,
+.reply pre {
+    margin: 0;
+}
+
+.date {
+    color: var(--textColor-gray);
+}
+
+.reply-container {
+    padding-left: 30px;
 }
 
 #comment-input,
 #reply-input {
     flex-grow: 1;
+    background-color: var(--bgColor-default);
+    border: 2px solid var(--borderColor-default);
+    border-radius: 10px;
+    color: var(--textColor-default);
+    padding: 7px;
+}
+
+#register-btn,
+#reply-btn {
+    align-self: flex-end;
+    background-color: var(--highlight-blue);
+    border: none;
+    /* border: 2px solid #3d444d; */
+    padding: 5px 10px;
+    border-radius: 5px;
+    margin-top: 10px;
+    color: var(--textColor-default);
+    cursor: pointer;
+    font-size: 14px;
+    font-family: inherit;
 }
 
 .comment,
@@ -131,8 +174,8 @@ img {
     display: flex;
     flex-direction: column;
     gap: 10px;
-    padding: 10px 0;
-    border-bottom: 2px solid black;
+    padding: 10px 5px;
+    border-bottom: 2px solid var(--borderColor-default);
 }
 
 .comment {
@@ -161,6 +204,10 @@ img {
     font-weight: bold;
 }
 
-.reply-container {
-    /* display: none; */
+.delete-comment-btn {
+    background-color: var(--btnColor-default);
+    border: 1px solid var(--borderColor-default);
+    color: var(--textColor-default);
+    border-radius: 5px;
+    cursor: pointer;
 }

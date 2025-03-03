@@ -15,18 +15,48 @@ form {
     gap: 10px;
 }
 
+input,
+textarea {
+    font-family: inherit;
+    background-color: var(--bgColor-default);
+    border: 2px solid var(--borderColor-default);
+    border-radius: 10px;
+    color: var(--textColor-default);
+    padding: 7px;
+}
+
 input {
     height: 30px;
 }
 
+input[type="file"] {
+    padding-top: 12px;
+}
+
 textarea {
-    height: 60vh;
+    min-height: 55vh;
 }
 
 .btn-container {
     margin-left: auto;
     display: flex;
-    gap: 20px;
+    gap: 10px;
+}
+
+.confirm-btn,
+.cancel-btn {
+    background-color: var(--btnColor-default);
+    border: 2px solid var(--borderColor-default);
+    padding: 5px 10px;
+    border-radius: 5px;
+    color: var(--textColor-default);
+    font-size: inherit;
+    font-family: inherit;
+}
+
+.confirm-btn {
+    background-color: var(--highlight-blue);
+    border: none;
 }
 
 .image-container {
@@ -44,5 +74,7 @@ img {
     height: 50px;
     width: 50px;
     border: none;
-    background-color: white;
+    background-color: var(--textColor-default);
+    opacity: 0.7;
+    cursor: pointer;
 }

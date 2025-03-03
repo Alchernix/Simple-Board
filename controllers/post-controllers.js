@@ -1,6 +1,5 @@
 // 포스트 + 이미지 생성/수정/삭제/상세보기
 const db = require("../db/quries");
-const { loadComments } = require("./comment-controllers");
 const { format } = require("date-fns");
 
 function createPostGet(req, res) {

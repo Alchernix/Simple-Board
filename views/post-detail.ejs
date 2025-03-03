@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= post.title %></title>
+    <link rel="stylesheet" href="/style.css">
     <link rel="stylesheet" href="/post-detail.css">
     <link rel="stylesheet" href="/header.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -11,49 +12,54 @@
 <body>
     <%- include('header', {user: user}) %>
     <main>
-        <h3 class="title"><%= post.title %></h3>
-        <div class="detail-container">
-            <div class="username"><%= post.username %></div>
-            <div class="date"><%= post.created_at %></div>
-        </div>
-        <div class="content">
-            <pre><%= post.content %></pre>
-            <% if (images !== []) { %>
-                <% images.forEach(image => { %>
-                    <img src="<%= image.url %>" alt="Image">
-                <% }) %>
-            <% } %>
-        </div>
-        
-        <form class="like-btn-container">
-            <button class="like-btn" id="like-btn" data-postid="<%= post.id %>">
-                <% if (isLiked) { %>
-                    <i class="fa-solid fa-heart"></i>
-                <%} else { %>
-                    <i class="fa-regular fa-heart"></i>
+        <div class="main">
+            <h3 class="title"><%= post.title %></h3>
+            <div class="detail-container">
+                <div class="username"><%= post.username %></div>
+                <div class="date"><%= post.created_at %></div>
+            </div>
+            <div class="content">
+                <pre><%= post.content %></pre>
+                <% if (images !== []) { %>
+                    <div class="images-container">
+                    <% images.forEach(image => { %>
+                        <img src="<%= image.url %>" alt="Image">
+                    <% }) %>
+                    </div>
                 <% } %>
-            </button>
-            <div id="like-count"><%= likeCount %></div>
-        </form>
-        
-    </main>
-    <div class="comments-container" id="comments-container">
-        <!-- 댓글 오는 곳 -->
-    </div>
-    <form class="comment-container" id="comment-form">
-        <textarea name="content" id="comment-input" placeholder="댓글을 입력하세요." required></textarea>
-        <button type="submit" id="register-btn">등록</button>
-    </form>
-    <div class="btn-container">
-        <a href="/" class="back-to-main-btn">목록</a>
-        <!-- 포스트 작성자나 어드민 유저만 포스트 수정&삭제 가능 -->
-        <% if (user.id === post.author || user.is_admin) { %>
-            <a href="/post/<%= post.id %>/edit" class="edit-btn">수정</a>
-            <form action="/post/<%= post.id %>/delete" method="post">
-                <button class="delete-btn" onclick="return confirm('게시글을 삭제하시겠습니까?')">삭제</button>
+            </div>
+            
+            <form class="like-btn-container">
+                <button class="like-btn" id="like-btn" data-postid="<%= post.id %>">
+                    <% if (isLiked) { %>
+                        <i class="fa-solid fa-heart"></i>
+                    <%} else { %>
+                        <i class="fa-regular fa-heart"></i>
+                    <% } %>
+                </button>
+                <div id="like-count"><%= likeCount %></div>
             </form>
-        <% } %>
-    </div>
+            
+        </div>
+        <div class="comments-container" id="comments-container">
+            <!-- 댓글 오는 곳 -->
+        </div>
+        <form class="comment-container" id="comment-form">
+            <textarea name="content" id="comment-input" placeholder="댓글을 입력하세요." required></textarea>
+            <button type="submit" id="register-btn">등록</button>
+        </form>
+        <div class="btn-container">
+            <a href="/" class="back-to-main-btn"><i class="fa-solid fa-bars"></i> 목록</a>
+            <!-- 포스트 작성자나 어드민 유저만 포스트 수정&삭제 가능 -->
+            <% if (user.id === post.author || user.is_admin) { %>
+                <a href="/post/<%= post.id %>/edit" class="edit-btn">수정</a>
+                <form action="/post/<%= post.id %>/delete" method="post">
+                    <button class="delete-btn" onclick="return confirm('게시글을 삭제하시겠습니까?')">삭제</button>
+                </form>
+            <% } %>
+        </div>    
+    </main>
+    
     <script src="/header.js"></script>
     <script src="/post-detail.js"></script>
 </body>

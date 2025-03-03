@@ -70,7 +70,7 @@ function renderComments(comments, user) {
                     : ''}
                 </div>
                 <pre>${comment.content}</pre>
-                <div>${format(new Date(comment.created_at))}</div>
+                <div class="date">${format(new Date(comment.created_at))}</div>
             </div>`
         } else if (comment.replies.length > 0) {
             // 대댓글이 있을 시
@@ -92,7 +92,7 @@ function renderComments(comments, user) {
                         : ''}
                 </div>
                 <pre>${reply.content}</pre>
-                <div>${format(new Date(reply.created_at))}</div>
+                <div class="date">${format(new Date(reply.created_at))}</div>
             </div>`
             }
 

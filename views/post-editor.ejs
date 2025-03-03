@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Post Editor</title>
+    <link rel="stylesheet" href="/style.css">
     <link rel="stylesheet" href="/post-editor.css">
     <!-- <link rel="stylesheet" href="https://cdn.ckeditor.com/ckeditor5/44.2.1/ckeditor5.css"> -->
     
@@ -24,11 +25,11 @@
                 <% }) %>
             <% } %>
         </div>
-        <label for="image">이미지 추가: </label>
+        <label for="image">이미지 추가(최대 10개): </label>
         <input type="file" name="image" id="image" accept="image/png, image/jpeg" multiple>
         <div class="btn-container">
-           <a href="<%= locals.post ? '/post/' + post.id : '/' %>">취소</a>
-            <button type="submit">확인</button> 
+           <a href="<%= locals.post ? '/post/' + post.id : '/' %>" class="cancel-btn">취소</a>
+            <button type="submit" class="confirm-btn">확인</button> 
         </div>
 
         <input type="hidden" name="deletedImages" id="deletedImages" value="">

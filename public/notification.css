@@ -1,13 +1,18 @@
-body {
-    margin: 0;
-    padding: 20px 5vw;
-}
-
 .title-container {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 2px solid black;
+    border-bottom: 2px solid var(--borderColor-default);
+}
+
+.read-all-btn {
+    background-color: var(--btnColor-default);
+    border: 2px solid var(--borderColor-default);
+    padding: 5px 10px;
+    border-radius: 5px;
+    color: var(--textColor-default);
+    cursor: pointer;
+    font-family: inherit;
 }
 
 .notification-container {
@@ -21,14 +26,18 @@ body {
     padding: 10px 0;
 }
 
+.heart {
+    color: var(--highlight-red);
+}
+
 .notification:hover {
-    background-color: whitesmoke;
+    background-color: var(--btnColor-hover);
 }
 
 .read {
-    background-color: white;
+    background-color: var(--bgColor-default);
 }
 
 .unread {
-    background-color: lightyellow;
+    background-color: var(--btnColor-default);
 }
