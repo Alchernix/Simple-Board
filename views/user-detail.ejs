@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Detail</title>
+    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="/header.css">
+    <link rel="stylesheet" href="/user-detail.css">
+</head>
+<body>
+    <%- include('header', {user: user}) %>
+    <div class="container">
+        <h3>회원정보</h3>
+        <div class="inner-container">
+            <div class="item-title">이름</div>
+            <div id="username"><%= user.username %></div>
+        </div>
+        <div id="username-err" class="err"></div>
+        <div class="inner-container">
+            <div class="item-title">회원구분</div>
+            <div><%= user.is_admin ? '관리자' : '일반회원' %></div>
+        </div>
+        <button id="edit-btn" class="edit-btn" data-id="<%= user.id %>">수정</button>
+        <button id="confirm-btn" class="confirm-btn">확인</button>
+        <a href="/user/<%= user.id %>" id="cancel-btn" class="cancel-btn">취소</a>
+    </div>
+    <script src="/header.js"></script>
+    <script>
+        const editBtn = document.querySelector("#edit-btn");
+        const confirmBtn = document.querySelector("#confirm-btn");
+        const cancelBtn = document.querySelector("#cancel-btn");
+        const username = document.querySelector("#username");
+        const userId = Number(editBtn.dataset.id);
+
+        const usernameErr = document.querySelector("#username-err");
+
+        const usernameInput = document.createElement("input");
+        usernameInput.type = "text";
+        usernameInput.value = username.textContent;
+
+        editBtn.addEventListener("click", () => {
+            username.replaceWith(usernameInput);
+            editBtn.style.display = "none";
+            confirmBtn.style.display = "block";
+            cancelBtn.style.display = "block";
+        })
+
+        confirmBtn.addEventListener("click", async (e) => {
+            e.preventDefault();
+            usernameErr.textContent = "";
+            try {
+                const response = await fetch(`/user/${userId}/edit`, {
+                    method: "POST",
+                    headers: {
+                    "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({username: usernameInput.value})
+                });
+                if (!response.ok) {
+                    throw new Error("사용자 수정 에러");
+                }
+                const {dupErr, lenErr} = await response.json();
+                if (lenErr) {
+                    usernameErr.textContent = "사용자 이름은 1글자 이상 10글자 이하여야 합니다.";
+                } else if (dupErr) {
+                    usernameErr.textContent = "이미 존재하는 사용자 이름입니다.";
+                } else {
+                    window.location.replace(`/user/${userId}`);
+                }
+            } catch(err) {
+                console.error(err);
+                alert("에러가 발생했습니다. 잠시 후 다시 시도해주세요.");
+            }
+        })
+
+    </script>
+</body>
+</html>

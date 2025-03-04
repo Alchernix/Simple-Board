@@ -18,6 +18,19 @@ async function createPost(userId, title, content) {
     const { rows } = await pool.query(SQL, [userId, title, content]);
     return rows[0];
 }
+
+// 유저네임이 중복되지 않을 경우만 업데이트
+async function editUser(userId, username) {
+    const SQL = `
+    UPDATE users
+    SET username = $2
+    WHERE id = $1
+    AND NOT EXISTS(SELECT 1 FROM users WHERE username = $2)
+    RETURNING *;
+    `
+    const { rows } = await pool.query(SQL, [userId, username]);
+    return rows[0];
+}
 // ================================================
 // 포스트
 //최근 게시물이 위로 오도록 역순으로 조회
@@ -262,6 +275,7 @@ async function deleteNotifications(userId) {
 
 module.exports = {
     createUser,
+    editUser,
     createPost,
     getAllPosts,
     getTotalPostNumbers,

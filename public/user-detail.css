@@ -1,20 +1,21 @@
-/* sign-up */
 body {
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    margin: 0;
-    padding: 0;
     height: 100dvh;
 }
 
 h3 {
-    margin: 0;
+    /* margin: 0; */
     text-align: center;
 }
 
-form {
+.item-title {
+    font-weight: bold;
+    width: 70px;
+}
+
+.container {
+    margin: auto;
     border: 2px solid var(--borderColor-default);
     border-radius: 20px;
     width: 300px;
@@ -24,7 +25,7 @@ form {
     padding: 20px;
 }
 
-input {
+.container input {
     background-color: var(--bgColor-default);
     border: 2px solid var(--borderColor-default);
     color: var(--textColor-default);
@@ -32,7 +33,14 @@ input {
     padding: 5px;
 }
 
-button,
+.inner-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.edit-btn,
+.confirm-btn,
 .cancel-btn {
     background-color: var(--btnColor-default);
     border: 1px solid var(--borderColor-default);
@@ -46,24 +54,19 @@ button,
     box-sizing: border-box;
 }
 
+.cancel-btn,
 .confirm-btn {
+    display: none;
+}
+
+.edit-btn {
     background-color: var(--highlight-blue);
-    border: none;
 }
 
-.auth-err,
-.dup-err,
-.len-err {
+.confirm-btn {
+    background-color: var(--highlight-green);
+}
+
+.err {
     color: var(--highlight-red);
-}
-
-.memb-err {
-    color: var(--highlight-red);
-    margin-bottom: 10px;
-}
-
-.sign-up-link {
-    align-self: center;
-    color: var(--highlight-blue);
-    text-decoration: underline;
 }

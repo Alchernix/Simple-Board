@@ -66,6 +66,32 @@ function logoutGet(req, res, next) {
     });
 };
 
+async function userPageGet(req, res) {
+    const user = req.user;
+    const userId = user.id;
+    const notificationCount = await db.countUnreadNotifications(userId);
+    res.render("user-detail", { user, notificationCount });
+}
+
+async function editUser(req, res) {
+    const user = req.user;
+    const { username } = req.body;
+    let lenErr = false;
+    let dupErr = false;
+    // 길이 확인
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        lenErr = true;
+    } else {
+        const result = await db.editUser(user.id, username);
+        if (!result) {
+            dupErr = true;
+        }
+    }
+
+    res.json({ dupErr, lenErr });
+}
+
 module.exports = {
     validateUser,
     signupPageGet,
@@ -73,4 +99,6 @@ module.exports = {
     signinPageGet,
     signinPagePost,
     logoutGet,
+    userPageGet,
+    editUser,
 }

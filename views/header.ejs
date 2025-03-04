@@ -67,7 +67,9 @@
     </form>
 </header>
 
-<div id="user-dialog" class="dialog">
-    <a href="/">회원정보</a>
-    <a href="/log-out">로그아웃</a>
-</div>
+<% if (locals.user) { %>
+    <div id="user-dialog" class="dialog">
+        <a href="/user/<%= user.id %>">회원정보</a>
+        <a href="/log-out">로그아웃</a>
+    </div>
+<% } %>

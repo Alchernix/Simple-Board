@@ -19,14 +19,14 @@
             <% if (locals.images) { %>
                 <% images.forEach(image => { %>
                     <div class="image-container">
-                        <img src="<%= image.url %>" alt="Image">
+                        <img src="<%= image.url %>" class="image" alt="Image">
                         <button type="button" class="delete-img-btn" data-id="<%= image.id %>">X</button>
                     </div>
                 <% }) %>
             <% } %>
         </div>
         <label for="image">이미지 추가(최대 10개): </label>
-        <input type="file" name="image" id="image" accept="image/png, image/jpeg" multiple>
+        <input type="file" name="image" id="image-input" accept="image/png, image/jpeg" multiple>
         <div class="btn-container">
            <a href="<%= locals.post ? '/post/' + post.id : '/' %>" class="cancel-btn">취소</a>
             <button type="submit" class="confirm-btn">확인</button> 
@@ -40,6 +40,7 @@
         const postForm = document.querySelector("#post-form");
         const titleInput = document.querySelector("#title-input");
         const contentInput = document.querySelector("#content-input");
+        const imageInput = document.querySelector("#image-input");
         const hiddenInput = document.querySelector("#deletedImages");
         const deletedImages = [];
         // 이미지 삭제 처리
@@ -56,6 +57,8 @@
         postForm.addEventListener("submit", (e) => {
             const title = titleInput.value.trim();
             const content = contentInput.value.trim();
+            const uploadedImages = [...document.querySelectorAll(".image")].filter(image => image.offsetParent !== null);
+            const uploadedImagesCount = uploadedImages.length;
             if (title.length === 0) {
                 e.preventDefault();
                 alert("제목은 비어있을 수 없습니다!");
@@ -68,6 +71,10 @@
             if (!content) {
                 e.preventDefault();
                 alert("내용은 비어있을 수 없습니다!");
+            }
+            if (uploadedImagesCount + imageInput.files.length > 10) {
+                e.preventDefault();
+                alert("이미지는 10개까지만 첨부할 수 있습니다!");
             }
         });
     </script>

@@ -23,6 +23,9 @@ router.post("/sign-in", asyncHandler(userControllers.signinPagePost));
 
 router.get("/log-out", asyncHandler(userControllers.logoutGet));
 
+router.get("/user/:userId", asyncHandler(userControllers.userPageGet));
+router.post("/user/:userId/edit", userControllers.validateUser, asyncHandler(userControllers.editUser));
+
 // posts
 router.get("/post-editor", asyncHandler(postControllers.createPostGet));
 router.post("/post-editor", upload.array("image", 10), asyncHandler(postControllers.createPostPost));
