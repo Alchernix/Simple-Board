@@ -70,5 +70,5 @@
   서버에서 에러가 발생했을 때는 에러 페이지로 이동합니다.<br>
   * **404 페이지**<br>
   404 에러는 별도로 표시됩니다.<br>
-##테이블 설계
+## 테이블 구조
 ![image](https://github.com/user-attachments/assets/49d44263-413d-49f5-9fca-7cae7e9e76ed)
