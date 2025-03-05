@@ -18,7 +18,7 @@ main {
     background-color: var(--highlight-blue);
     display: none;
     border-radius: 50%;
-    padding: 15px;
+    padding: 20px;
 }
 
 /* 테이블 */
