@@ -29,14 +29,14 @@ async function createPostPost(req, res) {
     const user = req.user;
     const post = await db.createPost(user.id, title, content);
     if (req.files && req.files.length > 0) {
-        // const urls = req.files.map(file => `/uploads/${file.filename}`);
-        // for (const url of urls) {
-        //     await db.uploadImage(post.id, url);
-        // }
-        for (const file of req.files) {
-            const result = await uploadToCloudinary(file.buffer);
-            await db.uploadImage(post.id, result.secure_url);
+        const urls = req.files.map(file => `/uploads/${file.filename}`);
+        for (const url of urls) {
+            await db.uploadImage(post.id, url);
         }
+        // for (const file of req.files) {
+        //     const result = await uploadToCloudinary(file.buffer);
+        //     await db.uploadImage(post.id, result.secure_url);
+        // }
     }
     res.redirect(`/post/${post.id}`);
 }
@@ -80,14 +80,14 @@ async function editPostPost(req, res) {
         }
     }
     if (req.files && req.files.length > 0) {
-        // const urls = req.files.map(file => `/uploads/${file.filename}`);
-        // for (const url of urls) {
-        //     await db.uploadImage(postId, url);
-        // }
-        for (const file of req.files) {
-            const result = await uploadToCloudinary(file.buffer);
-            await db.uploadImage(postId, result.secure_url);
+        const urls = req.files.map(file => `/uploads/${file.filename}`);
+        for (const url of urls) {
+            await db.uploadImage(postId, url);
         }
+        // for (const file of req.files) {
+        //     const result = await uploadToCloudinary(file.buffer);
+        //     await db.uploadImage(postId, result.secure_url);
+        // }
     }
     res.redirect(`/post/${postId}`);
 }
