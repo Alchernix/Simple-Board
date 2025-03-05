@@ -16,6 +16,7 @@
     "pg": "^8.13.3"
   },
   "scripts": {
-    "start": "node app.js"
+    "start": "node app.js",
+    "postinstall": "node db/createdb.js"
   }
 }
