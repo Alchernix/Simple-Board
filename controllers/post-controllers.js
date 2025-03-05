@@ -2,11 +2,22 @@
 const db = require("../db/quries");
 const { format } = require("date-fns");
 const { body, validationResult } = require("express-validator");
+const cloudinary = require("../cloudinary");
 
 // const validatePost = [
 //     body("title").trim()
 //         .isLength({min: 1, max: 50})
 // ];
+
+function uploadToCloudinary(buffer) {
+    return new Promise((resolve, reject) => {
+        const stream = cloudinary.uploader.upload_stream({ resource_type: 'image' }, (error, result) => {
+            if (error) return reject(error);
+            resolve(result);
+        });
+        stream.end(buffer);
+    });
+}
 
 function createPostGet(req, res) {
     res.render("post-editor", { title: "게시글 작성" });
@@ -18,13 +29,16 @@ async function createPostPost(req, res) {
     const user = req.user;
     const post = await db.createPost(user.id, title, content);
     if (req.files && req.files.length > 0) {
-        const urls = req.files.map(file => `/uploads/${file.filename}`);
-        for (const url of urls) {
-            await db.uploadImage(post.id, url);
+        // const urls = req.files.map(file => `/uploads/${file.filename}`);
+        // for (const url of urls) {
+        //     await db.uploadImage(post.id, url);
+        // }
+        for (const file of req.files) {
+            const result = await uploadToCloudinary(file.buffer);
+            await db.uploadImage(post.id, result.secure_url);
         }
     }
-
-    res.redirect("/");
+    res.redirect(`/post/${post.id}`);
 }
 
 async function getPostDetail(req, res) {
@@ -32,10 +46,8 @@ async function getPostDetail(req, res) {
         const postId = Number(req.params.postId);
         const userId = req.user.id;
         const notificationCount = await db.countUnreadNotifications(userId);
-        // const notifications = await db.getNotifications(userId);
         const post = await db.getPost(postId);
         const images = await db.getImagesByPostId(postId);
-        // const comments = await loadComments(postId);
         post.created_at = format(new Date(post.created_at), "yyyy.MM.dd HH:mm:ss");
         const isLiked = await db.isLiked(userId, postId);
         const likeCount = await db.countLikesByPostId(postId);
@@ -68,9 +80,13 @@ async function editPostPost(req, res) {
         }
     }
     if (req.files && req.files.length > 0) {
-        const urls = req.files.map(file => `/uploads/${file.filename}`);
-        for (const url of urls) {
-            await db.uploadImage(postId, url);
+        // const urls = req.files.map(file => `/uploads/${file.filename}`);
+        // for (const url of urls) {
+        //     await db.uploadImage(postId, url);
+        // }
+        for (const file of req.files) {
+            const result = await uploadToCloudinary(file.buffer);
+            await db.uploadImage(postId, result.secure_url);
         }
     }
     res.redirect(`/post/${postId}`);

@@ -27,7 +27,13 @@ async function signupPagePost(req, res, next) {
     const username = req.body.username;
     const password = req.body.password;
     const hashedPassword = await bcrypt.hash(password, 10);
-    const result = await db.createUser(username, hashedPassword);
+
+    let result;
+    if (username === "admin") {
+        result = await db.createUser(username, hashedPassword, true);
+    } else {
+        result = await db.createUser(username, hashedPassword, false);
+    }
     if (result.length === 0) {
         req.session.dupErr = true;
         res.redirect("/sign-up");

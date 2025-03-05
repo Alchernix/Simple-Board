@@ -1,12 +1,12 @@
 const pool = require("./pool");
 
 // 유저
-async function createUser(username, password) {
+async function createUser(username, password, isAdmin) {
     const SQL = `
-    INSERT INTO users (username, password)
-    VALUES ($1, $2)
+    INSERT INTO users (username, password, is_admin)
+    VALUES ($1, $2, $3)
     ON CONFLICT (username) DO NOTHING RETURNING *;`
-    const { rows } = await pool.query(SQL, [username, password]);
+    const { rows } = await pool.query(SQL, [username, password, isAdmin]);
     return rows;
 }
 
@@ -36,7 +36,14 @@ async function editUser(userId, username) {
 //최근 게시물이 위로 오도록 역순으로 조회
 async function getAllPosts(limit, offset) {
     const SQL = `
-    SELECT posts.id, posts.title, users.username, posts.created_at, count(DISTINCT comments.id) AS comment_count, count(DISTINCT likes.id) AS like_count
+    SELECT
+        posts.id,
+        posts.title,
+        users.username,
+        posts.created_at,
+        count(DISTINCT comments.id) AS comment_count,
+        count(DISTINCT likes.id) AS like_count,
+        CASE WHEN COUNT(DISTINCT images.id) > 0 THEN true ELSE false END AS has_image
     FROM posts
     INNER JOIN users
     ON posts.author = users.id
@@ -44,6 +51,8 @@ async function getAllPosts(limit, offset) {
     ON posts.id = comments.post_id AND comments.is_deleted = false
     LEFT JOIN likes
     ON posts.id = likes.post_id
+    LEFT JOIN images
+    ON posts.id = images.post_id
     GROUP BY posts.id, posts.title, users.username, posts.created_at
     ORDER BY posts.id DESC
     LIMIT $1 OFFSET $2;`
@@ -99,7 +108,14 @@ async function searchPosts(searchType, searchKeyword, limit, offset) {
             search = "WHERE users.username ILIKE '%' || $1 || '%'";
     }
     const SQL = `
-    SELECT posts.id, posts.title, users.username, posts.created_at, count(DISTINCT comments.id) AS comment_count, count(DISTINCT likes.id) AS like_count
+    SELECT
+        posts.id,
+        posts.title,
+        users.username,
+        posts.created_at,
+        COUNT(DISTINCT comments.id) AS comment_count,
+        COUNT(DISTINCT likes.id) AS like_count,
+        CASE WHEN COUNT(DISTINCT images.id) > 0 THEN true ELSE false END AS has_image
     FROM posts
     INNER JOIN users
     ON posts.author = users.id
@@ -107,6 +123,8 @@ async function searchPosts(searchType, searchKeyword, limit, offset) {
     ON posts.id = comments.post_id
     LEFT JOIN likes
     ON posts.id = likes.post_id
+    LEFT JOIN images
+    ON posts.id = images.post_id
     ${search}
     GROUP BY posts.id, posts.title, users.username, posts.created_at
     ORDER BY posts.id DESC

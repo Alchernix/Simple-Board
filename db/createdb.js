@@ -2,14 +2,14 @@ const { Client } = require('pg');
 require('dotenv').config();
 
 // users의 is_active: 회원 탈퇴 여부
-const connectionString = `postgres://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.HOST}:${process.env.DB_PORT}/${process.env.DB_NAME}`;
+const connectionString = process.env.DATABASE_URL;
+// const connectionString = `postgresql://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.HOST}:${process.env.DB_PORT}/${process.env.DB_NAME}`;
 
 const SQL = `
 CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     username VARCHAR(255) UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL,
-    is_active BOOLEAN DEFAULT true,
     is_admin BOOLEAN DEFAULT false
 );
 
